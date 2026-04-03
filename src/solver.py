@@ -28,9 +28,15 @@ class PLaplacianSolver:
             dtype=float,
         )
 
-    def solve(self, times, method="BDF", sparse=True, rtol=1e-5, atol=1e-6, **kwargs):
+    def solve(self, times, method="LSODA", sparse=True, rtol=1e-5, atol=1e-6, **kwargs):
         u0_interior = np.zeros(self.Nx - 1)
-        jac_val = self.sparsity if sparse else None
+        jac_val = None
+        if method == "LSODA":
+            if sparse:
+                kwargs["lband"] = 1
+                kwargs["uband"] = 1
+            else:
+                jac_val = self.sparsity if sparse else None
 
         sol = solve_ivp(
             fun=fast_p_laplacian_rhs,

@@ -27,7 +27,8 @@ def run_single_benchmark(params, ref_u, T=0.05, trials=3):
     """Executes a solver run and compares it against the reference array."""
     method, sparse, p, epsilon, Nx = params
 
-    if sparse and method in ["RK45", "LSODA"]:
+    # RK45 remains the only method that strictly fails with sparse/banded Jacobians
+    if sparse and method == "RK45":
         return {"duration_s": np.nan, "status": "Skipped (Unsupported)"}
 
     solver = PLaplacianSolver(p=p, h=1.0, Nx=Nx, epsilon=epsilon)
@@ -75,7 +76,6 @@ def run_single_benchmark(params, ref_u, T=0.05, trials=3):
 
     except Exception as e:
         return {"duration_s": np.nan, "status": f"Failed: {type(e).__name__}"}
-
 
 def benchmark_suite(param_grid, T=0.05):
     """Iterates through the parameter grid and compiles results."""
