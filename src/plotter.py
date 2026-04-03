@@ -8,7 +8,7 @@ def run_simulation():
     times_to_plot = [0.001, 0.005, 0.015, 0.035, 0.065]
 
     model = PLaplacianSolver(p=2.5, h=1.0, Nx=1000)
-    results = model.solve(times_to_plot)
+    results, stats = model.solve(times_to_plot)
     x = model.x
 
     fig, ax = plt.subplots(figsize=(10, 6), dpi=120)
