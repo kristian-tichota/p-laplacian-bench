@@ -1,0 +1,36 @@
+#+title: Benchmark
+
+* Parameter Overview
+These parameters are used when defining the parameter space for testing:
+
+| Parameter | Type  | Description                                  | Typical Range           |
+|-----------+-------+----------------------------------------------+-------------------------|
+| p         | Float | Power index                                  | > 2                     |
+| Nx        | Int   | Grid density                                 | > 10                    |
+| epsilon   | Float | Regularization parameter for the p-Laplacian | ~ 1e-6                  |
+| method    | Str   | ODE integration method                       | BDF, Radau, LSODA, RK45 |
+| sparse    | Bool  | Jacobian sparsity utilization                | True, False             |
+
+* Metrics
+For each parameter combination, the following metrics are evaluated:
+
+| Identifier | Name                 | Description                     |
+|------------+----------------------+---------------------------------|
+| fev        | Function Evaluations | Spatial derivatives calculation |
+| gev        | Gradient Evaluations | Jacobian matrix computation     |
+| lu         | LU Decompositions    | ---                             |
+
+* Sparse Vs. Nonsparse
+As Nx becomes large, the overhead of sparsifying the matrix becomes negligible and computation time is drastically reduced:  
+#+begin_src bash :results output
+python main.py benchmark --Nx 20 --eps=1e-6 --methods BDF Radau --p 2.5
+#+end_src
+
+#+RESULTS:
+: Starting benchmark suite with 4 configurations...
+: 
+:   -> Generating ground truth for p=2.5, eps=1e-06, Nx=20...
+: [ 1/4] BDF   | Sparse: True        | p: 2.5 | eps: 1e-06   | Nx: 20   | Err: 4.14e-07 | Time: 0.0120s | fev: 207  | gev: 3   | lu: 20  -> Success
+: [ 2/4] BDF   | Sparse: False       | p: 2.5 | eps: 1e-06   | Nx: 20   | Err: 4.14e-07 | Time: 0.0110s | fev: 207  | gev: 3   | lu: 20  -> Success
+: [ 3/4] Radau | Sparse: True        | p: 2.5 | eps: 1e-06   | Nx: 20   | Err: 5.07e-09 | Time: 0.0219s | fev: 304  | gev: 13  | lu: 54  -> Success
+: [ 4/4] Radau | Sparse: False       | p: 2.5 | eps: 1e-06   | Nx: 20   | Err: 5.07e-09 | Time: 0.0113s | fev: 304  | gev: 13  | lu: 54  -> Success
