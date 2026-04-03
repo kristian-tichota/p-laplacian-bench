@@ -8,22 +8,16 @@ def main():
         description="p-Laplacian PDE Solver and Benchmarking Suite"
     )
 
-    # Create subparsers for distinct commands
     subparsers = parser.add_subparsers(dest="task", required=True)
 
-    # --- 1. Simulate Subparser ---
     sim_parser = subparsers.add_parser(
         "simulate", help="Run a standard simulation and generate plots"
     )
-    # You can add simulation-specific arguments here later, e.g.:
-    # sim_parser.add_argument("--Nx", type=int, default=1000)
 
-    # --- 2. Benchmark Subparser ---
     bench_parser = subparsers.add_parser(
         "benchmark", help="Run the intelligent benchmarking suite"
     )
 
-    # Accept lists of values to build the hyperparameter grid
     bench_parser.add_argument(
         "--Nx",
         type=int,
@@ -68,19 +62,17 @@ def main():
         run_simulation()
 
     elif args.task == "benchmark":
-        # Construct the grid dict dynamically from CLI arguments
         grid = {
             "method": args.methods,
             "sparse": [
                 True,
                 False,
-            ],  # Typically, you always want to compare sparse vs non-sparse
+            ],
             "p": args.p,
             "epsilon": args.epsilon,
             "Nx": args.Nx,
         }
 
-        # Execute the suite with the dynamically built grid
         df = benchmark_suite(grid, T=args.T)
 
 
