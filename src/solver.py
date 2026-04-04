@@ -30,26 +30,40 @@ class PLaplacianSolver:
 
     def solve(self, times, method="LSODA", sparse=True, rtol=1e-5, atol=1e-6, **kwargs):
         u0_interior = np.zeros(self.Nx - 1)
+        t_eval = sorted(times)
+        
+        is_sundials = isinstance(method, str) and method.upper() in ["CVODE", "IDA"]
+
         jac_val = None
-        if method == "LSODA":
-            if sparse:
+        if sparse:
+            if isinstance(method, str) and (method == "LSODA" or is_sundials):
+                # LSODA and SUNDIALS expect bandwidths for banded Jacobians
                 kwargs["lband"] = 1
                 kwargs["uband"] = 1
             else:
-                jac_val = self.sparsity if sparse else None
+                # SciPy's BDF/Radau or compatible custom classes expect the sparse matrix
+                jac_val = self.sparsity
 
-        sol = solve_ivp(
-            fun=fast_p_laplacian_rhs,
-            t_span=(0, max(times)),
-            y0=u0_interior,
-            method=method,
-            jac_sparsity=jac_val,
-            t_eval=sorted(times),
-            args=(self.p, self.dx, self.h, self.epsilon),
-            rtol=rtol,
-            atol=atol,
-            **kwargs,
-        )
+        if is_sundials:
+            return self._solve_sundials(t_eval, u0_interior, method, rtol, atol, **kwargs)
+
+        solve_ivp_kwargs = {
+            "fun": fast_p_laplacian_rhs,
+            "t_span": (0, max(times)),
+            "y0": u0_interior,
+            "method": method,
+            "t_eval": t_eval,
+            "args": (self.p, self.dx, self.h, self.epsilon),
+            "rtol": rtol,
+            "atol": atol,
+            **kwargs
+        }
+
+        # Dynamically attach jac_sparsity to avoid breaking solvers that reject it natively
+        if jac_val is not None:
+            solve_ivp_kwargs["jac_sparsity"] = jac_val
+
+        sol = solve_ivp(**solve_ivp_kwargs)
 
         reconstructed_data = self._reconstruct(sol.t, sol.y)
 
@@ -61,6 +75,32 @@ class PLaplacianSolver:
             "message": sol.message,
         }
 
+        return reconstructed_data, stats
+
+    def _solve_sundials(self, t_eval, u0_interior, method, rtol, atol, **kwargs):
+        try:
+            from scikits.odes import ode
+        except ImportError as exc:
+            raise ImportError(
+                "SUNDIALS solvers require the 'scikits.odes' package to be installed."
+            ) from exc
+
+        # SUNDIALS expects the signature f(t, y, ydot) allowing inplace updates
+        def rhs_sundials(t, y, ydot):
+            ydot[:] = fast_p_laplacian_rhs(t, y, self.p, self.dx, self.h, self.epsilon)
+
+        options = {"rtol": rtol, "atol": atol, **kwargs}
+        solver = ode(method.lower(), rhs_sundials, **options)
+        sol = solver.solve(t_eval, u0_interior)
+
+        # sol.values.y has shape (len(t_eval), len(u0)) -> transpose for SciPy compatibility
+        y_matrix = sol.values.y.T 
+        reconstructed_data = self._reconstruct(sol.values.t, y_matrix)
+
+        stats = {
+            "success": sol.flag >= 0,
+            "message": sol.message,
+        }
         return reconstructed_data, stats
 
     def _reconstruct(self, time_steps, y_matrix):
