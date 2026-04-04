@@ -26,32 +26,14 @@ For each parameter combination, the following metrics are evaluated:
 * Sparse Vs. Nonsparse
 As Nx becomes large, the overhead of sparsifying the matrix becomes negligible and computation time is drastically reduced:  
 #+begin_src bash :results output
-python main.py benchmark --Nx 50 200 500 --eps=1e-6 --methods LSODA BDF Radau --p 2.5
+python main.py benchmark --Nx 500 --eps=1e-6 --methods CVODE LSODA --p 2.5
 #+end_src
 
 #+RESULTS:
-#+begin_example
-Starting benchmark suite with 18 configurations...
-
-  -> Generating ground truth for p=2.5, eps=1e-06, Nx=50...
-[ 1/18] LSODA | Sparse: True        | p: 2.5 | eps: 1e-06   | Nx: 50   | Err: 1.48e-07 | Time: 0.0009s | fev: 161  | gev: 0   | lu: 0   -> Success
-  -> Generating ground truth for p=2.5, eps=1e-06, Nx=200...
-[ 2/18] LSODA | Sparse: True        | p: 2.5 | eps: 1e-06   | Nx: 200  | Err: 2.74e-07 | Time: 0.0083s | fev: 615  | gev: 12  | lu: 12  -> Success
-  -> Generating ground truth for p=2.5, eps=1e-06, Nx=500...
-[ 3/18] LSODA | Sparse: True        | p: 2.5 | eps: 1e-06   | Nx: 500  | Err: 1.41e-07 | Time: 0.0236s | fev: 932  | gev: 36  | lu: 36  -> Success
-[ 4/18] LSODA | Sparse: False       | p: 2.5 | eps: 1e-06   | Nx: 50   | Err: 1.48e-07 | Time: 0.0009s | fev: 161  | gev: 0   | lu: 0   -> Success
-[ 5/18] LSODA | Sparse: False       | p: 2.5 | eps: 1e-06   | Nx: 200  | Err: 2.74e-07 | Time: 0.0165s | fev: 2967 | gev: 12  | lu: 12  -> Success
-[ 6/18] LSODA | Sparse: False       | p: 2.5 | eps: 1e-06   | Nx: 500  | Err: 1.41e-07 | Time: 0.2723s | fev: 18788 | gev: 36  | lu: 36  -> Success
-[ 7/18] BDF   | Sparse: True        | p: 2.5 | eps: 1e-06   | Nx: 50   | Err: 2.84e-07 | Time: 0.0149s | fev: 192  | gev: 3   | lu: 19  -> Success
-[ 8/18] BDF   | Sparse: True        | p: 2.5 | eps: 1e-06   | Nx: 200  | Err: 1.01e-06 | Time: 0.0672s | fev: 468  | gev: 26  | lu: 59  -> Success
-[ 9/18] BDF   | Sparse: True        | p: 2.5 | eps: 1e-06   | Nx: 500  | Err: 8.31e-07 | Time: 0.9680s | fev: 690  | gev: 75  | lu: 120 -> Success
-[10/18] BDF   | Sparse: False       | p: 2.5 | eps: 1e-06   | Nx: 50   | Err: 2.84e-07 | Time: 0.0144s | fev: 192  | gev: 3   | lu: 19  -> Success
-[11/18] BDF   | Sparse: False       | p: 2.5 | eps: 1e-06   | Nx: 200  | Err: 1.01e-06 | Time: 0.0646s | fev: 468  | gev: 26  | lu: 59  -> Success
-[12/18] BDF   | Sparse: False       | p: 2.5 | eps: 1e-06   | Nx: 500  | Err: 8.31e-07 | Time: 0.9454s | fev: 690  | gev: 75  | lu: 120 -> Success
-[13/18] Radau | Sparse: True        | p: 2.5 | eps: 1e-06   | Nx: 50   | Err: 5.29e-09 | Time: 0.0186s | fev: 300  | gev: 13  | lu: 58  -> Success
-[14/18] Radau | Sparse: True        | p: 2.5 | eps: 1e-06   | Nx: 200  | Err: 2.26e-09 | Time: 0.1835s | fev: 778  | gev: 46  | lu: 134 -> Success
-[15/18] Radau | Sparse: True        | p: 2.5 | eps: 1e-06   | Nx: 500  | Err: 1.41e-09 | Time: 3.0649s | fev: 1817 | gev: 100 | lu: 380 -> Success
-[16/18] Radau | Sparse: False       | p: 2.5 | eps: 1e-06   | Nx: 50   | Err: 5.29e-09 | Time: 0.0184s | fev: 300  | gev: 13  | lu: 58  -> Success
-[17/18] Radau | Sparse: False       | p: 2.5 | eps: 1e-06   | Nx: 200  | Err: 2.26e-09 | Time: 0.1740s | fev: 778  | gev: 46  | lu: 134 -> Success
-[18/18] Radau | Sparse: False       | p: 2.5 | eps: 1e-06   | Nx: 500  | Err: 1.41e-09 | Time: 1.9752s | fev: 1817 | gev: 100 | lu: 380 -> Success
-#+end_example
+: Starting benchmark suite with 4 configurations...
+: 
+:   -> Generating ground truth for p=2.5, eps=1e-06, Nx=500...
+: [ 1/4] CVODE | Sparse: True        | p: 2.5 | eps: 1e-06   | Nx: 500  | Err: nan | Time:     N/A | fev: 0    | gev: 0   | lu: 0   -> Failed: ValueError
+: [ 2/4] CVODE | Sparse: False       | p: 2.5 | eps: 1e-06   | Nx: 500  | Err: nan | Time:     N/A | fev: 0    | gev: 0   | lu: 0   -> Failed: ValueError
+: [ 3/4] LSODA | Sparse: True        | p: 2.5 | eps: 1e-06   | Nx: 500  | Err: 1.24e-07 | Time: 0.0279s | fev: 1552 | gev: 98  | lu: 98  -> Success
+: [ 4/4] LSODA | Sparse: False       | p: 2.5 | eps: 1e-06   | Nx: 500  | Err: 1.25e-07 | Time: 0.7112s | fev: 50663 | gev: 99  | lu: 99  -> Success

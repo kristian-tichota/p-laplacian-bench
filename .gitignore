@@ -3,3 +3,9 @@
 .projectile
 .envrc
 *.pyc
+
+*.aux
+*.log
+*.out
+*.pdf
+*.gz
