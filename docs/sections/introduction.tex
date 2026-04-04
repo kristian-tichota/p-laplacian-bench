@@ -1,0 +1,4 @@
+\section{Introduction}
+Choosing an appropriate time-stepper for a nonlinear PDE system may not be a trivial task. The results are contingent on host architecture; variations in L1/L2/L3 cache topologies, memory latency, CPU instruction sets, OS kernel and scheduler, compiler optimizations, linear solver backend (e.g., KLU, LAPACK), etc., can fundamentally alter relative execution speeds. Furthermore, the problem may exhibit spatially or temporally varying stiffness, and its characteristics may change significantly based on chosen parameters.
+
+This paper compares various numerical integrators for ODEs to serve as time-steppers from the \lib{solve\_ivp} suite in \pkg{SciPy} and \pkg{SUNDIALS} (SUite of Nonlinear and DIfferential/ALgebraic equation Solvers). The integrators are benchmarked on a large parameter space to highlight their structural differences.  
