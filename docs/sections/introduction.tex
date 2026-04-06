@@ -1,11 +1,2 @@
 \section{Introduction}
 Choosing an appropriate time-stepper for a nonlinear PDE system is a non-trivial task. The problem may exhibit spatially or temporally varying stiffness, and its characteristics may change significantly based on chosen parameters. Furthermore, the results are contingent on host architecture; variations in L1/L2/L3 cache topologies, memory latency, CPU instruction sets, OS kernel and scheduler, compiler optimizations, linear solver backend (e.g., KLU, LAPACK), and other hardware or software configurations, can fundamentally alter relative execution speeds.
-
-While numerous spatial disretization methods exist, this study employs finite difference schemes to reduce the PDEs into coupled ODEs. Once discretized, various numerical integrators for ODEs from the \lib{solve\_ivp} suite in \pkg{SciPy} and \pkg{SUNDIALS} (SUite of Nonlinear and DIfferential/ALgebraic equation Solvers) to serve as time-steppers. The integrators are benchmarked on a large parameter space to highlight their structural differences.
-
-The parameter space includes varying spatial grid resolutions (\(N_x\)), power indices (\(p\)), regularization parameters (\(\varepsilon\)), simulation stopping times (\(T\)), and Jacobian sparsity utilizations. For each parameter set, a solution computed via the Radau method with strict relative and absolute error tolerances (\texttt{rtol}, \texttt{atol}) is used as a reference. Solutions are compared via the grid-weighted discrete \(L^2\) norm, defined as
-\begin{equation}
-  ||\mathbf{e}||_L^2=\left(\Delta x \sum |u_i - u_i^{\text{ref}}|^2\right)^2.
-  \end{equation}
-
-The following metrics are evaluated: computation time, error (compared to Radau), function evaluations (nfev), Jacobian evaluations (njev), and matrix decompositions (nlu). 

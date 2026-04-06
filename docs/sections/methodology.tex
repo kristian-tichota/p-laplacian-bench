@@ -1,0 +1,9 @@
+\section{Methodology}
+The parameter space includes varying spatial grid resolutions (\(N_x\)), power indices (\(p\)), regularization parameters (\(\varepsilon\)), simulation stopping times (\(T\)), and Jacobian sparsity utilizations. For each parameter set, a solution computed via the Radau method with strict relative and absolute error tolerances (\texttt{rtol}, \texttt{atol}) is used as a reference. Solutions are compared via the grid-weighted discrete \(L^2\) norm, defined as
+\begin{equation}
+  ||\mathbf{e}||_{L^2}=\left(\Delta x \sum |u_i - u_i^{\text{ref}}|^2\right)^2.
+  \end{equation}
+
+  The following metrics are evaluated: computation time, error (compared to Radau), function evaluations (nfev), Jacobian evaluations (njev), and matrix decompositions (nlu).
+
+  The implementation is publicly available on GitHub \footnote{\url{https://github.com/kristian-tichota/p-laplacian-bench}}.
