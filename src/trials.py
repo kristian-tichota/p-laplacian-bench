@@ -29,7 +29,6 @@ def plot_sparsity_scaling(df):
         markersize=9
     )
 
-    plt.title("Execution Time Scaling: Sparse vs. Dense Jacobians", pad=15, fontweight='bold')
     plt.ylabel("Duration (seconds, Log Scale)", fontweight='bold')
     plt.xlabel("Grid Resolution ($N_x$)", fontweight='bold')
 
@@ -50,9 +49,9 @@ def plot_sparsity_scaling(df):
     )
 
     plt.tight_layout()
-    plt.savefig("sparsity_scaling.png", dpi=300, bbox_inches="tight")
+    plt.savefig("sparsity_scaling.pdf", format="pdf", bbox_inches="tight")
     plt.close()
-    print("Saved sparsity_scaling.png")
+    print("Saved sparsity_scaling.pdf")
 
 def main():
     # ---------------------------------------------------------
@@ -65,7 +64,7 @@ def main():
         "sparse": [True, False],
         "p": [2.5],
         "epsilon": [1e-6],
-        "Nx": [100, 200, 500, 1000, 1500, 2000] 
+        "Nx": [50, 100, 200, 500, 1000, 1500, 2000] 
     }
     
     print("--- Running Sparsity vs. Dense Scaling Benchmark ---")
