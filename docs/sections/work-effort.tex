@@ -1,1 +1,14 @@
-\section{Work-Effort Graph}
+\section{Work-Effort Analysis}
+
+Figure \ref{fig:work-effort} plots the trade-off between execution time and \(L_2\) error for the LSODA, BDF, and Radau solvers using sparse Jacobians at a fixed grid resolution of \(N_x = 1000\). The solver tolerances range from \(10^{-2}\) to \(10^{-10}\).
+
+LSODA strictly dominates the performance curve. At the tightest tolerance (\(10^{-10}\)), it reaches an \(L_2\) error of \(1.67 \times 10^{-10}\) in just 0.41 seconds. BDF takes 8.1 seconds to hit a similar error margin (\(4.05 \times 10^{-10}\)). Both solvers show predictable log-linear scaling, where tightening the tolerance reliably decreases error at the cost of execution time.
+
+Radau scales anomalously at loose tolerances. At \(10^{-2}\), its execution time spikes to 144.6 seconds. The solver forces over 448,000 function evaluations and overshoots the requested tolerance, landing at an error of \(8.83 \times 10^{-6}\). This indicates Radau struggles heavily with step-size selection or nonlinear convergence at loose tolerances for this specific system stiffness. Once the tolerance is tightened to \(10^{-6}\) and below, Radau stabilizes. It ultimately achieves the lowest absolute error in the suite (\(1.67 \times 10^{-13}\) at \(10^{-10}\) tolerance), but requires 10.7 seconds to do so. Overall, LSODA provides the best balance of speed and precision across the tested parameter space.
+
+\begin{figure}[htpb]
+  \centering
+  \includegraphics[width=\textwidth]{images/work_effort.pdf}
+  \caption{Work-effort diagram illustrating the trade-off between \(L_2\) error and execution time across solver tolerances (\(10^{-2}\) to \(10^{-10}\)) for LSODA, BDF, and Radau.}
+  \label{fig:work-effort}
+\end{figure}
