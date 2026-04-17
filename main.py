@@ -3,7 +3,6 @@ from src.trials import main as run_trials
 from src.plotter import run_simulation
 from src.benchmark import benchmark_suite
 
-
 def main():
     parser = argparse.ArgumentParser(
         description="p-Laplacian PDE Solver and Benchmarking Suite"
@@ -19,7 +18,11 @@ def main():
         "benchmark", help="Run the intelligent benchmarking suite"
     )
 
+    # ADD ARGUMENTS TO THE TRIALS SUBPARSER
     trials_parser = subparsers.add_parser("trials", help="Run the full experiment suite")
+    trials_parser.add_argument("--sparsity", action="store_true", help="Run the sparsity scaling benchmark")
+    trials_parser.add_argument("--work", action="store_true", help="Run the work-effort (precision) benchmark")
+    trials_parser.add_argument("--all", action="store_true", help="Run all available benchmarks")
 
     bench_parser.add_argument(
         "--skip-error",
@@ -73,20 +76,15 @@ def main():
     elif args.task == "benchmark":
         grid = {
             "method": args.methods,
-            "sparse": [
-                True,
-                False,
-            ],
+            "sparse": [True, False],
             "p": args.p,
             "epsilon": args.epsilon,
             "Nx": args.Nx,
         }
-
         df = benchmark_suite(grid, T=args.T, compute_error=not args.skip_error)
 
     elif args.task == "trials":
-        run_trials()
-
+        run_trials(args)
 
 if __name__ == "__main__":
     main()
