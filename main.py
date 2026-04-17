@@ -1,4 +1,5 @@
 import argparse
+from src.trials import main as run_trials
 from src.plotter import run_simulation
 from src.benchmark import benchmark_suite
 
@@ -18,6 +19,14 @@ def main():
         "benchmark", help="Run the intelligent benchmarking suite"
     )
 
+    trials_parser = subparsers.add_parser("trials", help="Run the full experiment suite")
+
+    bench_parser.add_argument(
+        "--skip-error",
+        action="store_true",
+        help="Skip generating the ground truth solution and calculating L2 error",
+    )
+    
     bench_parser.add_argument(
         "--Nx",
         type=int,
@@ -73,7 +82,10 @@ def main():
             "Nx": args.Nx,
         }
 
-        df = benchmark_suite(grid, T=args.T)
+        df = benchmark_suite(grid, T=args.T, compute_error=not args.skip_error)
+
+    elif args.task == "trials":
+        run_trials()
 
 
 if __name__ == "__main__":
