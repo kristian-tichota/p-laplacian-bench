@@ -221,9 +221,10 @@ def plot_p_sweep(df):
     ax.set_yscale("log")
     
     # Highlight the linear case p=2.0
-    plt.axvline(x=2.0, color='gray', linestyle='--', alpha=0.7, zorder=0)
-    plt.text(2.02, ax.get_ylim()[0] * 1.5, 'Linear Case (p=2.0)', color='gray', fontsize=10, rotation=90)
-
+    plt.axvline(x=2.0, color='gray', linestyle='--', alpha=0.5, zorder=0)
+    plt.text(2.05, 0.95, 'Linear Case ($p=2.0$)', 
+             transform=ax.get_xaxis_transform(), 
+             color='gray', fontsize=10, va='top', ha='left')
     plt.grid(True, which="major", ls="-", alpha=0.8)
     plt.grid(True, which="minor", ls="--", alpha=0.4)
 
@@ -327,7 +328,7 @@ def run_p_sweep_benchmark():
         "method": ["LSODA", "BDF", "Radau"],
         "sparse": [True],
         "p": [1.5, 1.8, 2.0, 2.5, 3.0, 4.0],
-        "epsilon": [1e-6],
+        "epsilon": [1e-4],
         "Nx": [1000],
         "tol": [1e-6]
     }
