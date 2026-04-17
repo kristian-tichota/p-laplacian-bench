@@ -1,7 +1,7 @@
 \section{Sparsity Test}
 The computational cost of time integration can be reduced by several orders of magnitude by specifying the sparsity pattern of the Jacobian matrix. Because the spatial discretization relies on local neighborhood stencils, the resulting Jacobian matrix is highly banded (tridiagonal). 
 
-In Figure \ref{fig:sparsity-test}, we compare the execution times of LSODA and BDF solvers using dense versus sparse Jacobians across varying grid resolutions \(N_x\). The test parameters are fixed at \(p = 2.5\) and \(\varepsilon = 10^{-6}\).
+In Figure \ref{fig:sparsity-test}, we compare the execution times of LSODA and BDF solvers using dense versus sparse Jacobians across varying grid resolutions \(N_x\). The test parameters are fixed at \(p = 2.5\), \(\varepsilon = 10^{-6}\), and \(T = 0.05\).
 
 The results highlight two distinct computational regimes. For very small grids (\(N_x < 200\)), the dense implementation of BDF slightly outperforms its sparse counterpart. This is due to the inherent overhead required to allocate sparse data structures and track pointer indices, which dominates the execution time when the total number of operations is low. 
 
