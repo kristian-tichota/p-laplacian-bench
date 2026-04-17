@@ -15,7 +15,7 @@ def generate_reference_solution(p, epsilon, Nx, T):
     solver = PLaplacianSolver(p=p, h=1.0, Nx=Nx, epsilon=epsilon)
 
     # Force strict tolerances and use Radau with the sparse Jacobian
-    data, stats = solver.solve([T], method="Radau", sparse=True, rtol=1e-11, atol=1e-11)
+    data, stats = solver.solve([T], method="Radau", sparse=True, rtol=1e-13, atol=1e-13)
 
     if not stats or not stats.get("success", False):
         raise RuntimeError(f"Reference failed: {stats.get('message', 'Unknown error')}")
