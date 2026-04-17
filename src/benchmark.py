@@ -25,7 +25,7 @@ def generate_reference_solution(p, epsilon, Nx, T):
 
 def run_single_benchmark(params, ref_u=None, T=0.05, trials=3):
     """Executes a solver run and compares it against the reference array (if provided)."""
-    method, sparse, p, epsilon, Nx = params
+    method, sparse, p, epsilon, Nx, tol = params
 
     if sparse and method == "RK45":
         return {"duration_s": np.nan, "status": "Skipped (Unsupported)"}
@@ -38,7 +38,7 @@ def run_single_benchmark(params, ref_u=None, T=0.05, trials=3):
         durations = []
         for _ in range(trials):
             start = time.perf_counter()
-            data, stats = solver.solve([T], method=method, sparse=sparse)
+            data, stats = solver.solve([T], method=method, sparse=sparse, rtol=tol, atol=tol)
             durations.append(time.perf_counter() - start)
 
         best_time = min(durations)
@@ -86,6 +86,8 @@ def benchmark_suite(param_grid, T=0.05, compute_error=True):
 
     for idx, exp in enumerate(experiments, 1):
         p, eps, Nx = exp["p"], exp["epsilon"], exp["Nx"]
+        tol = exp.get("tol", 1e-3) 
+        
         ref_key = (p, eps, Nx)
         ref_u = None
 
@@ -100,13 +102,12 @@ def benchmark_suite(param_grid, T=0.05, compute_error=True):
             
             ref_u = reference_cache[ref_key]
 
-            # If reference failed (and we WANTED an error calc), skip benchmarking
             if ref_u is None:
                 exp.update({"duration_s": np.nan, "status": "Failed: No Reference", "error_l2": np.nan})
                 results.append(exp)
                 continue
 
-        params = (exp["method"], exp["sparse"], p, eps, Nx)
+        params = (exp["method"], exp["sparse"], p, eps, Nx, tol)
         metrics = run_single_benchmark(params, ref_u=ref_u, T=T)
 
         exp.update(metrics)
@@ -118,10 +119,10 @@ def benchmark_suite(param_grid, T=0.05, compute_error=True):
         
         print(
             f"[{idx:2d}/{total_runs}] {exp['method']:<5} | "
-            f"Sparse: {s_status:<11} | p: {p:<3} | eps: {eps:<7} | Nx: {Nx:<4} | "
+            f"Sparse: {s_status:<5} | tol: {tol:<7.1e} | Nx: {Nx:<4} | "
             f"Err: {exp.get('error_l2', np.nan):.2e} | "
             f"Time: {duration_str:>7} | "
-            f"fev: {exp.get('nfev', 0):<4} | gev: {exp.get('njev', 0):<3} | lu: {exp.get('nlu', 0):<3} -> {exp['status']}"
+            f"fev: {exp.get('nfev', 0):<4} | gev: {exp.get('njev', 0):<3} -> {exp['status']}"
         )
         
     return pd.DataFrame(results)
