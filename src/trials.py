@@ -304,7 +304,7 @@ def run_epsilon_sweep_benchmark():
         "p": [2.5],
         "epsilon": [1e-2, 1e-4, 1e-6, 1e-8, 1e-10],
         "Nx": [1000],
-        "tol": [1e-6] # Fixed moderate tolerance
+        "tol": [1e-6]
     }
     
     print("\n--- Running Regularization Sensitivity (Epsilon Sweep) Benchmark ---")
@@ -329,7 +329,7 @@ def run_p_sweep_benchmark():
         "p": [1.5, 1.8, 2.0, 2.5, 3.0, 4.0],
         "epsilon": [1e-6],
         "Nx": [1000],
-        "tol": [1e-6] # Fixed moderate tolerance
+        "tol": [1e-6]
     }
     
     print("\n--- Running Nonlinearity Index (P Sweep) Benchmark ---")
