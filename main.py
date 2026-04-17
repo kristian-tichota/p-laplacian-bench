@@ -21,6 +21,8 @@ def main():
     trials_parser = subparsers.add_parser("trials", help="Run the full experiment suite")
     trials_parser.add_argument("--sparsity", action="store_true", help="Run the sparsity scaling benchmark")
     trials_parser.add_argument("--work", action="store_true", help="Run the work-effort (precision) benchmark")
+    trials_parser.add_argument("--epsilon", action="store_true", help="Run the epsilon regularization sensitivity benchmark")
+    trials_parser.add_argument("--psweep", action="store_true", help="Run the nonlinearity index (p-value) benchmark")
     trials_parser.add_argument("--all", action="store_true", help="Run all available benchmarks")
 
     bench_parser.add_argument(
