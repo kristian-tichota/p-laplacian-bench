@@ -36,10 +36,14 @@ class PLaplacianSolver:
 
         jac_val = None
         if sparse:
-            if isinstance(method, str) and (method == "LSODA" or is_sundials):
+            if isinstance(method, str) and (method == "LSODA"):
                 # LSODA and SUNDIALS expect bandwidths for banded Jacobians
                 kwargs["lband"] = 1
                 kwargs["uband"] = 1
+            elif is_sundials:
+                kwargs["lband"] = 1
+                kwargs["uband"] = 1
+                kwargs["linsolver"] = "band"
             else:
                 # SciPy's BDF/Radau or compatible custom classes expect the sparse matrix
                 jac_val = self.sparsity
@@ -91,16 +95,42 @@ class PLaplacianSolver:
 
         options = {"rtol": rtol, "atol": atol, **kwargs}
         solver = ode(method.lower(), rhs_sundials, **options)
-        sol = solver.solve(t_eval, u0_interior)
 
-        # sol.values.y has shape (len(t_eval), len(u0)) -> transpose for SciPy compatibility
+        # SUNDIALS requires the first element of the time array to be the initial time (0.0)
+        t_sundials = np.array(t_eval)
+        if t_sundials[0] != 0.0:
+            t_sundials = np.insert(t_sundials, 0, 0.0)
+
+        sol = solver.solve(t_sundials, u0_interior)
+
+        if sol.flag < 0:
+            error_msg = f"SUNDIALS solver failed with flag {sol.flag}"
+            if getattr(sol, "errors", None):
+                error_msg += f": {sol.errors}"
+            return None, {"success": False, "message": error_msg}
+
+        # sol.values.y has shape (len(t_sundials), len(u0)) -> transpose for SciPy compatibility
         y_matrix = sol.values.y.T 
-        reconstructed_data = self._reconstruct(sol.values.t, y_matrix)
+        t_out = sol.values.t
+
+        # Filter out the t=0.0 step if it wasn't originally requested by the user
+        valid_indices = [i for i, t in enumerate(t_out) if t in t_eval]
+        y_matrix_filtered = y_matrix[:, valid_indices]
+        t_out_filtered = t_out[valid_indices]
+
+        reconstructed_data = self._reconstruct(t_out_filtered, y_matrix_filtered)
+
+        # Retrieve statistics from the solver object, not the solution namedtuple
+        info = solver.get_info()
 
         stats = {
-            "success": sol.flag >= 0,
-            "message": sol.message,
+            "success": True,
+            "message": getattr(sol, "message", "Integration successful."),
+            "nfev": info.get("NumRhsEvals", 0),      # Number of function evaluations
+            "njev": info.get("NumJacEvals", 0),      # Number of Jacobian evaluations
+            "nlu": info.get("NumLinSolvSetups", 0),  # Number of LU decompositions
         }
+        
         return reconstructed_data, stats
 
     def _reconstruct(self, time_steps, y_matrix):
