@@ -18,7 +18,6 @@ def main():
         "benchmark", help="Run the intelligent benchmarking suite"
     )
 
-    # ADD ARGUMENTS TO THE TRIALS SUBPARSER
     trials_parser = subparsers.add_parser("trials", help="Run the full experiment suite")
     trials_parser.add_argument("--sparsity", action="store_true", help="Run the sparsity scaling benchmark")
     trials_parser.add_argument("--work", action="store_true", help="Run the work-effort (precision) benchmark")
