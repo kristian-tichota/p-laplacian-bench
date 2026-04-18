@@ -6,7 +6,7 @@ LSODA strictly dominates the performance curve. At the tightest tolerance (\(10^
 
 Radau scales anomalously at loose tolerances. At \(10^{-2}\), its execution time spikes to 143.6 seconds. The solver forces hundreds of thousands of function evaluations and overshoots the requested tolerance, landing at an error of \(8.83 \times 10^{-6}\). This indicates Radau struggles heavily with step-size selection or nonlinear convergence at loose tolerances for this specific system stiffness. Once the tolerance is tightened to \(10^{-6}\) and below, Radau stabilizes. It ultimately achieves the lowest absolute error in the suite (\(1.77 \times 10^{-13}\) at \(10^{-10}\) tolerance), but requires 10.6 seconds to do so. Overall, LSODA provides the best balance of speed and precision across the tested parameter space.
 
-\begin{figure}[htpb]
+\begin{figure}[H]
   \centering
   \includegraphics[width=\textwidth]{images/work_effort.pdf}
   \caption{Work-effort diagram illustrating the trade-off between \(L_2\) error and execution time across solver tolerances (\(10^{-2}\) to \(10^{-10}\)) for LSODA, BDF, and Radau.}

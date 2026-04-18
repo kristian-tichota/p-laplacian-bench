@@ -8,7 +8,7 @@ Moving away from the linear baseline exposes severe differences in solver effici
 
 BDF and Radau degrade severely as \(p\) scales up. At \(p=4.0\), BDF requires 11.2 seconds to resolve the physics, while Radau struggles for 14.2 seconds, forcing an immense 38,201 function evaluations and 2,122 Jacobian updates to push through the stiffness. In stark contrast, LSODA navigates the degenerate regime with remarkable efficiency. Even at the highly nonlinear \(p=4.0\) limit, LSODA completes the integration in just 0.54 seconds. Its internal heuristics clearly manage the sharp shifting gradients better than the pure implicit methods. This widens the performance gap by over an order of magnitude at the extremes of the parameter space.
 
-\begin{figure}[htpb]
+\begin{figure}[H]
   \centering
   \includegraphics[width=\textwidth]{images/p_sweep.pdf}
   \caption{Execution time scaling of LSODA, BDF, and Radau solvers against the nonlinearity index \(p\).}

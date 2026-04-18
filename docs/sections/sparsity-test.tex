@@ -9,7 +9,7 @@ However, as \(N_x\) increases, the dense solvers exhibit \(O(N_x^3)\) scaling du
 
 Furthermore, the data indicates that LSODA consistently outperforms the standard BDF implementation across all grid sizes for this specific parameter set, suggesting that LSODA's method-switching heuristics navigate the problem's stiffness more efficiently.
 
-\begin{figure}[htpb]
+\begin{figure}[H]
   \centering
   \includegraphics[width=\textwidth]{images/sparsity_scaling.pdf}
   \caption{Execution time scaling of LSODA and BDF solvers with dense and sparse Jacobians.}
