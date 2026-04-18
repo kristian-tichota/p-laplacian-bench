@@ -1,0 +1,18 @@
+\section{CVODE and LSODA Work-Effort}
+
+Figure \ref{fig:cvode-work-effort} illustrates a work-effort stress test comparing LSODA and CVODE at a significantly higher grid resolution (\(N_x = 5000\)) and increased nonlinearity (\(p = 3\)), with regularization fixed at \(\varepsilon = 10^{-6}\) and simulation time at \(T=0.05\). This specific parameter combination exposes a divergence in solver robustness. 
+
+LSODA handles the degenerate regime gracefully. It exhibits predictable log-linear scaling. As the tolerance is tightened from \(10^{-2}\) to \(10^{-10}\), LSODA's execution time increases steadily from 0.91 seconds to 13.86 seconds, while the \(L_2\) error drops monotonically to \(2.35 \times 10^{-12}\). It does not get confused by the underlying physics.
+
+In contrast, CVODE exhibits a performance anomaly, visually represented by the curve looping backward in execution time. At a loose tolerance of \(10^{-4}\), CVODE's execution time spikes to an abysmal 19.15 seconds, yet it only achieves an error of \(6.04 \times 10^{-4}\). This might be a symptom of nonlinear convergence failure. The loose tolerance permits CVODE to attempt overly aggressive time steps. Since the problem is highly nonlinear at \(p = 3\), these large steps throw the internal Newton iterations into a regime where they cannot converge. The solver repeatedly fails, rejects the step, recalculates the Jacobian, shrinks the step size, and tries again. This internal thrashing wastes massive amounts of computational effort.
+
+Ironically, when CVODE is forced to use tighter tolerances (\(10^{-6}\) through \(10^{-10}\)), its execution time plummets back down to the 4 to 7-second range. By demanding higher accuracy, the solver is forced to take smaller, mathematically stable time steps right from the beginning, completely avoiding the thrashing behavior. 
+
+Ultimately, while CVODE proves highly efficient at the strictest tolerances (solving the \(10^{-10}\) case in 7.35 seconds compared to LSODA's 13.86 seconds), its failure at intermediate tolerances makes it somewhat unreliable. LSODA remains more robust and predictable as a general-purpose solver for this system.
+
+\begin{figure}[htpb]
+  \centering
+  \includegraphics[width=\textwidth]{images/cvode_work_effort.pdf}
+  \caption{Work-effort diagram illustrating the trade-off between \(L_2\) error and execution time for LSODA and CVODE at \(N_x = 5000\) and \(p = 3\).}
+  \label{fig:cvode-work-effort}
+\end{figure}
