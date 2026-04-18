@@ -2,6 +2,8 @@
 
 The purpose of this repository is transparency and reproducible research. Parts of the code are used in my bachelor's thesis for numerical evaluations to compare against analytic bounds.
 
+[p_sweep.pdf](https://github.com/user-attachments/files/26860054/p_sweep.pdf)
+
 # Benchmarking
 The file `benchmark.org` serves as a literate programming dashboard for comfortably executing benchmarks. It briefly explains the parameters, metrics, and usage via examples. The benchmarks provide empirical comparisons (e.g. sparse vs non-sparse implementations) that validate theoretical claims.
 
