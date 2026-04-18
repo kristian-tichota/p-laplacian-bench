@@ -4,6 +4,9 @@ on: [push]
 jobs:
   build_latex:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write 
+
     steps:
       - name: Set up Git repository
         uses: actions/checkout@v4
@@ -14,8 +17,19 @@ jobs:
           root_file: docs/main.tex
           work_in_root_file_dir: true
           
-      - name: Upload PDF artifact
-        uses: actions/upload-artifact@v4
+      - name: Create Release and Upload PDF
+        uses: softprops/action-gh-release@v2
         with:
-          name: compiled-document
-          path: docs/main.pdf
+          tag_name: build-${{ github.run_number }}
+          name: "Compiled PDF (Build ${{ github.run_number }})"
+          files: docs/main.pdf
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Delete older releases
+        uses: dev-drprasad/delete-older-releases@v0.3.3
+        with:
+          keep_latest: 3
+          delete_tags: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
