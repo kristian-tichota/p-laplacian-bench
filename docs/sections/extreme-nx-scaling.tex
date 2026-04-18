@@ -1,4 +1,4 @@
-\section{Extreme Spatial Scaling Analysis}
+\subsection{Extreme Spatial Scaling}
 
 Figure \ref{fig:extreme-nx} presents an extreme spatial scaling test, pushing the grid resolution (\(N_x\)) from 1,000 up to 100,000 elements at a strict \(10^{-6}\) tolerance. The simulation time is fixed at \(T=0.05\) and the index \(p = 2.5\). This test aims to bottleneck the solvers primarily at the hardware memory and linear algebra level, seeking to minimize the relative impact of the inherent overhead from their respective Python wrappers.
 

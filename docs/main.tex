@@ -3,7 +3,7 @@
 \input{preamble/settings}
 
 \begin{document}
-
+\pagenumbering{roman}
 \begin{titlepage}
     \centering
     \vspace*{1cm}
@@ -34,6 +34,7 @@
 \end{titlepage}
 
 \newpage
+\setcounter{page}{2}
 \begin{abstract}
   In this paper, we benchmark several time integrators from the \lib{solve\_ivp} suite in \pkg{SciPy} and \pkg{SUNDIALS} (SUite of Nonlinear and DIfferential/ALgebraic equation Solvers) using the nonlinear 1D \(p\)-Laplacian partial differential equation. By varying the nonlinearity index \(p\), the equation smoothly transitions across linear, singular, and strongly degenerate physical regimes, providing an ideal stress test for numerical stiffness and solver robustness. We evaluate the LSODA, BDF, Radau, and CVODE solvers across a wide parameter space, pushing spatial grid resolutions up to \(N_x = 100,000\) to isolate hardware-level memory and linear algebra bottlenecks. The results demonstrate that utilizing sparse Jacobian structures is strictly necessary to avoid \(O(N_x^3)\) scaling walls. While the heavily optimized C-level backend of CVODE provides superior execution speeds in specific stiff regimes, its strictly implicit architecture is vulnerable to catastrophic floating-point underflow and nonlinear convergence failures at extreme nonlinearities (\(p \ge 10\)). Ultimately, SciPy's LSODA is identified as the most reliable general-purpose solver, utilizing an automatic method-switching architecture to gracefully bypass initial-condition singularities while remaining highly competitive at massive spatial scales.
 \end{abstract}
@@ -42,9 +43,13 @@
 \tableofcontents
 \newpage
 
+\pagenumbering{arabic}
+\setcounter{page}{1}
 \input{sections/introduction}
 \input{sections/suite}
 \input{sections/methodology}
+
+\section{Performance Benchmarks}
 \input{sections/sparsity-test}
 \input{sections/work-effort}
 \input{sections/regularization-sensitivity}
