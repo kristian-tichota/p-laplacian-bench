@@ -2,7 +2,7 @@
 
 The purpose of this repository is transparency and reproducible research. Parts of the code are used in my bachelor's thesis for numerical evaluations to compare against analytic bounds.
 
-<img width="500" alt="A parameter sweep image representing the repository" src="https://github.com/user-attachments/assets/fc804a6f-1f6c-4a91-b4cf-cd1140c76d61" />
+<img width="600" alt="A parameter sweep image representing the repository" src="https://github.com/user-attachments/assets/fc804a6f-1f6c-4a91-b4cf-cd1140c76d61" />
 
 
 # Benchmarking
