@@ -1,9 +1,31 @@
 \section{Methodology}
-The parameter space includes varying spatial grid resolutions (\(N_x\)), power indices (\(p\)), regularization parameters (\(\varepsilon\)), simulation stopping times (\(T\)), and Jacobian sparsity utilizations. For each parameter set, a solution computed via the Radau method with strict relative and absolute error tolerances (\texttt{rtol}, \texttt{atol}) is used as a reference. Solutions are compared via the grid-weighted discrete \(L^2\) norm, defined as
+The parameter space includes varying spatial grid resolutions (\(N_x\)), power indices (\(p\)), regularization parameters (\(\varepsilon\)), simulation stopping times (\(T\)), and Jacobian sparsity utilizations. For each parameter set, a solution computed via the CVODE method from SUNDIALS with strict relative and absolute error tolerances (\(\texttt{rtol} = \texttt{atol} = 10^{-13}\)) is used as a reference. Solutions are compared via the grid-weighted discrete \(L^2\) norm, defined as
 \begin{equation}
   ||\mathbf{e}||_{L^2}=\left(\Delta x \sum |u_i - u_i^{\text{ref}}|^2\right)^{\frac{1}{2}}.
   \end{equation}
 
-  The following metrics are evaluated: computation time, error (compared to Radau), function evaluations (nfev), Jacobian evaluations (njev), and matrix decompositions (nlu).
+The following metrics are evaluated: computation time, error (compared to CVODE with strict tolreances), function evaluations (nfev), Jacobian evaluations (njev), and matrix decompositions (nlu). In the following sections, we will omit detailed descriptions of nfev, njev, and nlu, and instead focus on the computation time which is easier to grasp. 
 
-  The implementation is publicly available on GitHub \footnote{\url{https://github.com/kristian-tichota/p-laplacian-bench}} under the free AGPL-3.0-or-later license.
+The implementation is publicly available on GitHub \footnote{\url{https://github.com/kristian-tichota/p-laplacian-bench}} under the free AGPL-3.0-or-later license. The documentation explains how to replicate the benchmarks in this paper. Similar relative results are to be expected but are not strictly guaranteed due to host architecture differences.
+
+The system specifications are detailed in Table \ref{tab:hardware_specs}.
+
+\begin{table}[H]
+\centering
+\caption{Benchmark Environment Specifications}
+\label{tab:hardware_specs}
+\begin{tabular}{@{}ll@{}}
+\toprule
+\textbf{Component} & \textbf{Specification} \\ 
+\midrule
+\textbf{CPU} & AMD Ryzen 5 5600X (6-Core/12-Thread, @ 4.65 GHz) \\
+\textbf{Memory} & 32 GiB System DDR4 RAM \\
+\textbf{OS} & Gentoo Linux x86\_64 (Kernel 6.18.18-gentoo-dist) \\
+\textbf{GCC Compiler Flags} & \texttt{-march=native -O2 -pipe} \\
+\textbf{Python Environment} & Python 3.12 / 3.13 \\
+\textbf{Native Libraries} & LAPACK (via system USE flags) \\
+\bottomrule
+\end{tabular}
+\vspace{1ex}
+{\raggedright \small \textit{Note:} Include specific versions for SciPy, Numba, SUNDIALS, and your LAPACK backend (e.g., OpenBLAS) prior to publication.\par}
+\end{table}
