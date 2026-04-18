@@ -12,19 +12,19 @@ The system specifications are detailed in Table \ref{tab:hardware_specs}.
 
 \begin{table}[H]
 \centering
+\renewcommand{\arraystretch}{1.2}
 \caption{Benchmark Environment Specifications}
 \label{tab:hardware_specs}
-\begin{tabular}{@{}ll@{}}
+\begin{tabular}{@{} l l @{}}
 \toprule
 \textbf{Component} & \textbf{Specification} \\ 
 \midrule
-\textbf{CPU} & AMD Ryzen 5 5600X (6-Core/12-Thread, @ 4.65 GHz) \\
-\textbf{Memory} & 32 GiB System DDR4 RAM \\
-\textbf{OS} & Gentoo Linux x86\_64 (Kernel 6.18.18-gentoo-dist) \\
-\textbf{GCC Compiler Flags} & \texttt{-march=native -O2 -pipe} \\
-\textbf{Python Environment} & Python 3.12 / 3.13 \\
-\textbf{Native Libraries} & LAPACK (via system USE flags) \\
+CPU & AMD Ryzen 5 5600X (6-Core/12-Thread, @ 4.65 GHz) \\
+Memory & 32 GiB System DDR4 RAM \\
+OS & Gentoo GNU/Linux x86\_64 (Kernel 6.18.18-gentoo-dist) \\
+GCC Compiler Flags & \texttt{-march=native -O2 -pipe} \\
+Python Environment & Python 3.13 \\
+Native Libraries & LAPACK (via system USE flags) \\
 \bottomrule
 \end{tabular}
-\vspace{1ex}
 \end{table}
