@@ -10,7 +10,7 @@ Ironically, when CVODE is forced to use tighter tolerances (\(10^{-6}\) through 
 
 Ultimately, while CVODE proves highly efficient at the strictest tolerances (solving the \(10^{-10}\) case in 7.35 seconds compared to LSODA's 13.86 seconds), its failure at intermediate tolerances makes it somewhat unreliable. LSODA remains more robust and predictable as a general-purpose solver for this system.
 
-\begin{figure}[htpb]
+\begin{figure}[H]
   \centering
   \includegraphics[width=\textwidth]{images/cvode_work_effort.pdf}
   \caption{Work-effort diagram illustrating the trade-off between \(L_2\) error and execution time for LSODA and CVODE at \(N_x = 5000\) and \(p = 3\).}
