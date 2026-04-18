@@ -1,11 +1,46 @@
-\documentclass{article}[12pt]
+\documentclass{article}
 \input{preamble/packages}
 \input{preamble/settings}
-\title{Benchmarking ODE solvers with a 1D \(p\)-Laplacian}
-\author{Kristian Tichota}
-\date{\today}
+
 \begin{document}
-\maketitle
+
+\begin{titlepage}
+    \centering
+    \vspace*{1cm}
+
+    \includegraphics[width=0.4\textwidth]{images/faculty_logo.pdf} \par
+    \vspace{0.8cm}
+    {\LARGE \textsc{University of West Bohemia} \par}
+    \vspace{0.5cm}
+    {\Large \textsc{Faculty of Applied Sciences} \par}
+    \vspace{0.3cm}
+    {\large Department of Mathematics (KMA) \par}
+    
+    \vspace{4cm}
+
+    {\Huge \bfseries Benchmarking ODE solvers \\ with a 1D \(p\)-Laplacian \par}
+    
+    \vspace{3cm}
+    
+    {\Large \textbf{Kristian Tichota} \par}
+    
+    \vfill
+    
+    {\large 
+    \textbf{Supervisor:} Doc. Ing. Marek Brandner, Ph.D. \par
+    }
+    \vspace{0.8cm}
+    {\large \today \par}
+\end{titlepage}
+
+\newpage
+\begin{abstract}
+  In this paper, we benchmark several time integrators from the \lib{solve\_ivp} suite in \pkg{SciPy} and \pkg{SUNDIALS} (SUite of Nonlinear and DIfferential/ALgebraic equation Solvers) using the nonlinear 1D \(p\)-Laplacian partial differential equation. By varying the nonlinearity index \(p\), the equation smoothly transitions across linear, singular, and strongly degenerate physical regimes, providing an ideal stress test for numerical stiffness and solver robustness. We evaluate the LSODA, BDF, Radau, and CVODE solvers across a wide parameter space, pushing spatial grid resolutions up to \(N_x = 100,000\) to isolate hardware-level memory and linear algebra bottlenecks. The results demonstrate that utilizing sparse Jacobian structures is strictly necessary to avoid \(O(N_x^3)\) scaling walls. While the heavily optimized C-level backend of CVODE provides superior execution speeds in specific stiff regimes, its strictly implicit architecture is vulnerable to catastrophic floating-point underflow and nonlinear convergence failures at extreme nonlinearities (\(p \ge 10\)). Ultimately, SciPy's LSODA is identified as the most reliable general-purpose solver, utilizing an automatic method-switching architecture to gracefully bypass initial-condition singularities while remaining highly competitive at massive spatial scales.
+\end{abstract}
+
+\newpage
+\tableofcontents
+\newpage
 
 \input{sections/introduction}
 \input{sections/suite}
@@ -17,4 +52,5 @@
 \input{sections/cvode-work-effort}
 \input{sections/extreme-nx-scaling}
 \input{sections/extreme-p-scaling}
+
 \end{document}
