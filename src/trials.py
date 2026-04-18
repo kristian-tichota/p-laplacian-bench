@@ -490,7 +490,7 @@ def run_cvode_work_effort_benchmark():
     grid = {
         "method": ["LSODA", "CVODE"],
         "sparse": [True],
-        "p": [2.5],
+        "p": [3],
         "epsilon": [1e-6],
         "Nx": [5000],  
         "tol": [1e-2, 1e-4, 1e-6, 1e-8, 1e-10] 
