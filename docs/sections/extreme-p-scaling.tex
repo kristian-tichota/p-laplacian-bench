@@ -1,0 +1,16 @@
+\section{Extreme Nonlinearity Scaling and Failure Limits}
+
+Figure \ref{fig:extreme-p} explores the solvers' behavior as the system is pushed into a strongly degenerate regime. In this test, the grid resolution is fixed at \(N_x = 1000\), the tolerance is strictly enforced at \(10^{-6}\), and the nonlinearity index \(p\) is swept from 3.0 up to 8.0. The regularization parameter is fixed at \(\varepsilon=10^{-6}\).
+
+Interestingly, while LSODA and CVODE performed similarly in the moderately stiff regime (\(p = 2.5\)), pushing the physics to these extremes reveals a noticeable performance gap in CVODE's favor. Both solvers exhibit a roughly logarithmic slowdown as the gradients sharpen, but CVODE consistently outpaces LSODA. By the time the system reaches \(p = 8.0\), CVODE completes the integration in 0.56 seconds, whereas LSODA takes nearly twice as long at 1.04 seconds. It appears that under a strict \(10^{-6}\) tolerance, which generally prevents the convergence thrashing observed at looser tolerances, CVODE's optimized internal BDF implementation handles the severe stiffness more efficiently.
+
+However, this performance advantage comes with a significant caveat if we attempt to push \(p\) even further (e.g., \(p \ge 10\)). At these extremes, CVODE encounters a nonlinear convergence failure immediately at \(t=0.0\). This behavior strongly suggests a floating-point underflow issue. Because the interior of the domain is initialized to zero, the initial spatial gradient is exactly zero. The diffusion coefficient then relies entirely on the regularization parameter, scaling as \(\varepsilon^{p-2}\). For \(\varepsilon = 10^{-6}\) and \(p = 10\), this term evaluates to \(10^{-48}\), falling well below machine epsilon. In standard double-precision arithmetic, this registers as a true zero, effectively disconnecting the interior grid points and likely resulting in a singular, non-invertible Jacobian matrix on the first time step. As a strictly implicit solver, CVODE attempts to factor this matrix immediately and consequently fails. 
+
+LSODA, on the other hand, manages to bypass this initial condition problem. This resilience is likely due to its automatic method-switching architecture, which typically defaults to an explicit Adams method to begin integration. Since explicit methods do not require evaluating or inverting a Jacobian, LSODA can calculate the boundary flux and take the first few microscopic explicit time steps. Once the non-zero boundaries propagate into the interior, the gradients move away from zero, resolving the underflow condition. With the Jacobian regaining full rank, LSODA can then safely switch over to its implicit BDF method to finish the integration. Therefore, while CVODE appears faster across the viable hyper-degenerate sweep, LSODA's multi-method architecture seems to offer a practical failsafe against such initial condition singularities.
+
+\begin{figure}[htpb]
+  \centering
+  \includegraphics[width=\textwidth]{images/extreme_p_scaling.pdf}
+  \caption{Execution time scaling for LSODA and CVODE as the nonlinearity index \(p\) is pushed into the strongly degenerate regime (\(p = 3.0\) to \(8.0\)).}
+  \label{fig:extreme-p}
+\end{figure}
