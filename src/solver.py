@@ -93,7 +93,7 @@ class PLaplacianSolver:
         def rhs_sundials(t, y, ydot):
             ydot[:] = fast_p_laplacian_rhs(t, y, self.p, self.dx, self.h, self.epsilon)
 
-        options = {"rtol": rtol, "atol": atol, **kwargs}
+        options = {"rtol": rtol, "atol": atol, "max_steps": kwargs.pop("max_steps", 1000000), **kwargs}
         solver = ode(method.lower(), rhs_sundials, **options)
 
         # SUNDIALS requires the first element of the time array to be the initial time (0.0)
