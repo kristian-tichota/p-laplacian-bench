@@ -23,8 +23,13 @@ def main():
     trials_parser.add_argument("--work", action="store_true", help="Run the work-effort (precision) benchmark")
     trials_parser.add_argument("--epsilon", action="store_true", help="Run the epsilon regularization sensitivity benchmark")
     trials_parser.add_argument("--psweep", action="store_true", help="Run the nonlinearity index (p-value) benchmark")
+    trials_parser.add_argument("--cvode-work", action="store_true", help="Run the CVODE vs LSODA work-effort benchmark")
+    trials_parser.add_argument("--extreme-nx", action="store_true", help="Run the massive Nx scaling benchmark")
+    trials_parser.add_argument("--extreme-p", action="store_true", help="Run the hyper-degenerate p scaling benchmark")
     trials_parser.add_argument("--all", action="store_true", help="Run all available benchmarks")
 
+
+    
     bench_parser.add_argument(
         "--skip-error",
         action="store_true",
