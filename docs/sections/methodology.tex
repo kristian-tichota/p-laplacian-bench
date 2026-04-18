@@ -4,7 +4,9 @@ The parameter space includes varying spatial grid resolutions (\(N_x\)), power i
   ||\mathbf{e}||_{L^2}=\left(\Delta x \sum |u_i - u_i^{\text{ref}}|^2\right)^{\frac{1}{2}}.
   \end{equation}
 
-The following metrics are evaluated: computation time, error (compared to CVODE with strict tolreances), function evaluations (nfev), Jacobian evaluations (njev), and matrix decompositions (nlu). In the following sections, we will omit detailed descriptions of nfev, njev, and nlu, and instead focus on the computation time which is easier to grasp. 
+  The following metrics are evaluated: computation time, error (compared to CVODE with strict tolreances), function evaluations (nfev), Jacobian evaluations (njev), and matrix decompositions (nlu). In the following sections, we will omit detailed descriptions of nfev, njev, and nlu, and instead focus on the computation time which is easier to grasp.
+
+  The analytical Jacobian matrix was not explicitly provided to any of the tested integrators. The solvers were configured to rely on their internal finite-difference quotient approximations, given only the highly banded (tridiagonal) structural footprint. This constraint reflects out-of-the-box engineering workflows where deriving analytical Jacobians for highly degenerate nonlinear systems is labor-intensive. The performance metrics accurately reflect the robustness of each solver's internal step-size and finite-difference heuristics when operating as a black-box integrator.   
 
 The implementation is publicly available on GitHub \footnote{\url{https://github.com/kristian-tichota/p-laplacian-bench}} under the free AGPL-3.0-or-later license. The documentation explains how to replicate the benchmarks in this paper. Similar relative results are to be expected but are not strictly guaranteed due to host architecture differences.
 
