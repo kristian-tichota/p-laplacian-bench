@@ -7,6 +7,147 @@ from src.benchmark import benchmark_suite
 
 sns.set_theme(style="whitegrid", context="paper", font_scale=1.2)
 
+def plot_cvode_work_effort(df):
+    """Plots the Work-Effort (Precision) diagram for LSODA vs CVODE."""
+    plot_df = df[(df["status"] == "Success") & (df["error_l2"] > 0)].copy()
+    
+    if plot_df.empty:
+        print("No successful runs to plot for CVODE Work-Effort.")
+        return
+
+    plot_df = plot_df.sort_values(by=["method", "tol"], ascending=[True, False])
+    plt.figure(figsize=(10, 7))
+
+    custom_palette = {
+        "LSODA": "#d7191c",  
+        "CVODE": "#984ea3", # Purple for SUNDIALS
+    }
+
+    ax = sns.lineplot(
+        data=plot_df,
+        x="duration_s",
+        y="error_l2",
+        hue="method",
+        style="method",
+        markers=["o", "D"],
+        dashes=False, 
+        palette=custom_palette,
+        linewidth=2.5,
+        markersize=9,
+        sort=False 
+    )
+
+    for _, row in plot_df.iterrows():
+        tol_str = f"{row['tol']:.0e}"
+        ax.annotate(
+            tol_str,
+            (row['duration_s'], row['error_l2']),
+            textcoords="offset points",
+            xytext=(10, 0),
+            ha='left',
+            va='center',
+            fontsize=8,
+            color=custom_palette.get(row['method'], 'black'),
+            alpha=0.85
+        )
+
+    plt.ylabel("L2 Error (Log Scale)", fontweight='bold')
+    plt.xlabel("Execution Time (seconds, Log Scale)", fontweight='bold')
+
+    ax.set_xscale("log")
+    ax.set_yscale("log")
+
+    plt.grid(True, which="major", ls="-", alpha=0.8)
+    plt.grid(True, which="minor", ls="--", alpha=0.4)
+
+    handles, labels = ax.get_legend_handles_labels()
+    plt.legend(handles=handles, labels=labels, bbox_to_anchor=(1.05, 1), loc='upper left', frameon=True, title="Method")
+    plt.tight_layout()
+    plt.savefig("cvode_work_effort.pdf", format="pdf", bbox_inches="tight")
+    plt.close()
+    print("Saved cvode_work_effort.pdf")
+
+
+def plot_extreme_nx(df):
+    """Plots execution time scaling for massive spatial grids."""
+    plot_df = df[df["status"] == "Success"].copy()
+    
+    if plot_df.empty:
+        print("No successful runs to plot for Extreme Nx.")
+        return
+
+    plt.figure(figsize=(9, 6))
+    custom_palette = {"LSODA": "#d7191c", "CVODE": "#984ea3"}
+
+    ax = sns.lineplot(
+        data=plot_df,
+        x="Nx",
+        y="duration_s",
+        hue="method",
+        style="method",
+        markers=["o", "D"],
+        dashes=False,
+        palette=custom_palette,
+        linewidth=2.5,
+        markersize=9
+    )
+
+    plt.ylabel("Duration (seconds, Log Scale)", fontweight='bold')
+    plt.xlabel("Grid Resolution ($N_x$, Log Scale)", fontweight='bold')
+
+    ax.set_xscale("log")
+    ax.set_yscale("log")
+    
+    plt.grid(True, which="major", ls="-", alpha=0.8)
+    plt.grid(True, which="minor", ls="--", alpha=0.4)
+
+    handles, labels = ax.get_legend_handles_labels()
+    plt.legend(handles=handles, labels=labels, bbox_to_anchor=(1.05, 1), loc='upper left', frameon=True, title="Method")
+    plt.tight_layout()
+    plt.savefig("extreme_nx_scaling.pdf", format="pdf", bbox_inches="tight")
+    plt.close()
+    print("Saved extreme_nx_scaling.pdf")
+
+
+def plot_extreme_p(df):
+    """Plots execution time scaling into the hyper-degenerate regime (p > 4.0)."""
+    plot_df = df[df["status"] == "Success"].copy()
+    
+    if plot_df.empty:
+        print("No successful runs to plot for Extreme P.")
+        return
+
+    plt.figure(figsize=(9, 6))
+    custom_palette = {"LSODA": "#d7191c", "CVODE": "#984ea3"}
+
+    ax = sns.lineplot(
+        data=plot_df,
+        x="p",
+        y="duration_s",
+        hue="method",
+        style="method",
+        markers=["o", "D"],
+        dashes=False,
+        palette=custom_palette,
+        linewidth=2.5,
+        markersize=9
+    )
+
+    plt.ylabel("Duration (seconds, Log Scale)", fontweight='bold')
+    plt.xlabel("Nonlinearity Index ($p$)", fontweight='bold')
+
+    ax.set_yscale("log")
+    
+    plt.grid(True, which="major", ls="-", alpha=0.8)
+    plt.grid(True, which="minor", ls="--", alpha=0.4)
+
+    handles, labels = ax.get_legend_handles_labels()
+    plt.legend(handles=handles, labels=labels, bbox_to_anchor=(1.05, 1), loc='upper left', frameon=True, title="Method")
+    plt.tight_layout()
+    plt.savefig("extreme_p_scaling.pdf", format="pdf", bbox_inches="tight")
+    plt.close()
+    print("Saved extreme_p_scaling.pdf")
+
 def plot_sparsity_scaling(df):
     """Plots the execution time scaling of sparse vs dense Jacobians across Nx."""
     plot_df = df[df["status"] == "Success"].copy()
@@ -342,13 +483,88 @@ def run_p_sweep_benchmark():
     plot_p_sweep(df_p)
     return df_p
 
+def run_cvode_work_effort_benchmark():
+    """
+    Direct Work-Effort Comparison: LSODA vs CVODE
+    """
+    grid = {
+        "method": ["LSODA", "CVODE"],
+        "sparse": [True],
+        "p": [2.5],
+        "epsilon": [1e-6],
+        "Nx": [5000],  
+        "tol": [1e-2, 1e-4, 1e-6, 1e-8, 1e-10] 
+    }
+    
+    print("\n--- Running CVODE vs LSODA Work-Effort Benchmark ---")
+    df = benchmark_suite(grid, T=0.05, compute_error=True)
+    
+    print("\n--- CVODE vs LSODA Work-Effort Results ---")
+    print(df[["method", "tol", "duration_s", "error_l2", "status"]].to_string(index=False))
+    
+    plot_cvode_work_effort(df)
+    return df
+
+
+def run_extreme_nx_benchmark():
+    """
+    Extreme Scale Test: Memory bandwidth and sparse LU overhead.
+    Pushes grid resolution to 50,000 to heavily penalize Python wrapper overhead.
+    """
+    grid = {
+        "method": ["LSODA", "CVODE"],
+        "sparse": [True],
+        "p": [2.5],
+        "epsilon": [1e-6],
+        "Nx": [1000, 5000, 10000, 25000, 50000],
+        "tol": [1e-6]
+    }
+    
+    print("\n--- Running Extreme Nx Benchmark ---")
+    df = benchmark_suite(grid, T=0.05, compute_error=False)
+    
+    print("\n--- Extreme Nx Results ---")
+    print(df[["method", "Nx", "duration_s", "status"]].to_string(index=False))
+    
+    plot_extreme_nx(df)
+    return df
+
+
+def run_extreme_p_benchmark():
+    """
+    Hyper-Degenerate Regime Test: Nonlinear iteration stress.
+    Pushes p up to 7.0 to force microscopic time-stepping.
+    """
+    grid = {
+        "method": ["LSODA", "CVODE"],
+        "sparse": [True],
+        "p": [3.0, 4.0, 5.0, 6.0, 7.0],
+        "epsilon": [1e-6],
+        "Nx": [1000],
+        "tol": [1e-6]
+    }
+    
+    print("\n--- Running Extreme P (Hyper-Degenerate) Benchmark ---")
+    df = benchmark_suite(grid, T=0.05, compute_error=False)
+    
+    print("\n--- Extreme P Results ---")
+    print(df[["method", "p", "duration_s", "status"]].to_string(index=False))
+    
+    plot_extreme_p(df)
+    return df
 
 def main(args):
     """
     Main entry point for trials. Expects 'args' from the top-level main.py parser.
     """
+    # Gather all flags to check if the user specified any
+    flags = [
+        args.sparsity, args.work, args.epsilon, args.psweep, 
+        args.cvode_work, args.extreme_nx, args.extreme_p, args.all
+    ]
+
     # If no flags are provided, run all benchmarks
-    if not any([args.sparsity, args.work, args.epsilon, args.psweep, args.all]):
+    if not any(flags):
         print("No specific benchmark requested. Running all benchmarks by default.\n")
         args.all = True
 
@@ -364,6 +580,15 @@ def main(args):
     if args.psweep or args.all:
         run_p_sweep_benchmark()
 
+    if args.cvode_work or args.all:
+        run_cvode_work_effort_benchmark()
+
+    if args.extreme_nx or args.all:
+        run_extreme_nx_benchmark()
+
+    if args.extreme_p or args.all:
+        run_extreme_p_benchmark()
+
 
 if __name__ == "__main__":
     class DummyArgs:
@@ -371,5 +596,8 @@ if __name__ == "__main__":
         work = False
         epsilon = False
         psweep = False
+        cvode_work = False   
+        extreme_nx = False   
+        extreme_p = False    
         all = True
     main(DummyArgs())
