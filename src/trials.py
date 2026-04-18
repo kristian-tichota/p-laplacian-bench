@@ -516,7 +516,7 @@ def run_extreme_nx_benchmark():
         "sparse": [True],
         "p": [2.5],
         "epsilon": [1e-6],
-        "Nx": [1000, 5000, 10000, 25000, 50000],
+        "Nx": [1000, 5000, 10000, 25000, 50000, 100000],
         "tol": [1e-6]
     }
     
@@ -538,7 +538,7 @@ def run_extreme_p_benchmark():
     grid = {
         "method": ["LSODA", "CVODE"],
         "sparse": [True],
-        "p": [3.0, 4.0, 5.0, 6.0, 7.0],
+        "p": [3.0, 4.0, 5.0, 6.0, 7.0, 8.0],
         "epsilon": [1e-6],
         "Nx": [1000],
         "tol": [1e-6]
