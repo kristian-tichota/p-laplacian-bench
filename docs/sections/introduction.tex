@@ -1,8 +1,15 @@
 \section{Introduction}
-Choosing an appropriate time-stepper for a highly nonlinear partial differential equation (PDE) is a non-trivial task. Depending on the physical regime being modeled, systems can exhibit violently shifting spatial and temporal stiffness. This study utilizes the 1D \(p\)-Laplacian to evaluate solver robustness under these conditions:
+Choosing an appropriate time-stepper for a highly nonlinear partial differential equation (PDE) is a non-trivial task. Depending on the physical regime being modeled, systems can exhibit violently shifting spatial and temporal stiffness. To evaluate solver robustness under these conditions, this study utilizes the 1D \(p\)-Laplacian:
 \begin{equation} \label{eq:p-laplacian}
-  \partial_t u = \nabla \cdot \left( (|\nabla u|^2 + \varepsilon^2)^{\frac{p-2}{2}} \nabla u \right)
+  \partial_t u = \nabla \cdot \left( (|\nabla u|^2 + \varepsilon^2)^{\frac{p-2}{2}} \nabla u \right).
 \end{equation}
-Varying the index \(p\) in Equation \eqref{eq:p-laplacian} transitions the model across linear, singular, and strongly degenerate regimes, making it an ideal stress-test for numerical integrators. 
+For a given \(T > 0\), \(h > 0\), and spatial domain \(\Omega = (0,1)\), the operator is subjected to the Dirichlet boundary conditions \(u(t,0) = h\) and \(u(t,1) = 0\) for \(t \in (0, T)\), along with the initial condition \(u(x,0) = 0\) for \(x \in \Omega\).
 
-However, evaluating these solvers requires looking beyond pure algorithmic complexity. Benchmark results are strictly contingent on the host architecture. Variations in L1/L2/L3 cache topologies, memory latency, CPU instruction sets, operating system schedulers, and underlying linear solver backends (such as KLU or LAPACK) can fundamentally alter relative execution speeds. This paper attempts to expose the mathematical limitations and hardware-level computational bottlenecks by varying system parameters and grid resolutions.
+A strong solution $u$ satisfying the regularity conditions
+\begin{align*}
+    u &\in C^{1,0}((0,T) \times \Omega) \cap C^{0,1}((0,T) \times \Omega) \cap C([0,T] \times \overline{\Omega}), \\
+    |\partial_x u|^{p-2} \partial_x u &\in C^{0,1}((0,T) \times \Omega),
+\end{align*}
+does not exist due to two primary factors: the incompatible corner condition at $(t,x) = (0,0)$, and the loss of strict parabolicity at points where $\partial_x u = 0$. These complicating factors make this particular PDE a uniquely challenging and effective tool for benchmarking ODE solvers.
+
+Varying the index \(p\) in Equation \eqref{eq:p-laplacian} transitions the model across linear, singular, and strongly degenerate regimes, making it an ideal stress-test for numerical integrators. However, evaluating these solvers requires looking beyond pure algorithmic complexity. Benchmark results are strictly contingent on the host architecture. Variations in L1/L2/L3 cache topologies, memory latency, CPU instruction sets, operating system schedulers, and underlying linear solver backends (such as KLU or LAPACK) can fundamentally alter relative execution speeds. This paper attempts to expose the mathematical limitations and hardware-level computational bottlenecks by varying system parameters and grid resolutions.
