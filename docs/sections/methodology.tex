@@ -1,5 +1,5 @@
 \section{Methodology}
-The parameter space includes varying spatial grid resolutions (\(N_x\)), power indices (\(p\)), regularization parameters (\(\varepsilon\)), simulation stopping times (\(T\)), and Jacobian sparsity utilizations. For each parameter set, a solution computed via the CVODE method from SUNDIALS with strict relative and absolute error tolerances (\(\texttt{rtol} = \texttt{atol} = 10^{-13}\)) is used as a reference. Solutions are compared via the grid-weighted discrete \(L^2\) norm, defined as
+The parameter space includes varying spatial grid resolutions (\(N_x\)), power indices (\(p\)), regularization parameters (\(\varepsilon\)), simulation stopping times (\(T\)), and Jacobian sparsity utilizations. The left Dirichlet boundary condition is fixed at \(u(t,0) = 1\). For each parameter set, a solution computed via the CVODE method from SUNDIALS with strict relative and absolute error tolerances (\(\texttt{rtol} = \texttt{atol} = 10^{-13}\)) is used as a reference. Solutions are compared via the grid-weighted discrete \(L^2\) norm, defined as
 \begin{equation}
   ||\mathbf{e}||_{L^2}=\left(\Delta x \sum |u_i - u_i^{\text{ref}}|^2\right)^{\frac{1}{2}}.
   \end{equation}
