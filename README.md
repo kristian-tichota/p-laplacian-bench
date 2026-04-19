@@ -16,7 +16,7 @@ The file `benchmark.org` serves as a literate programming dashboard for comforta
 Non-Emacs users can convert `benchmark.org` into a `.ipynb` file for use in Jupyter or run the Python commands directly by copying them from `benchmark.org`.
 
 # Result Contingency
-Benchmark comparisons are highly dependent on the host architecture. Variations in L1/L2/L3 cache topologies, memory latency, CPU instruction sets, OS kernel, etc., can fundamentally alter relative execution speeds. Executing the benchmarks on different hardware may not simply scale the execution time.
+Benchmark comparisons are highly dependent on the host architecture. Variations in L1/L2/L3 cache topologies, memory latency, CPU instruction sets, OS kernel, etc., can fundamentally alter relative execution speeds. Executing the benchmarks on different hardware may not simply scale the execution time. A detailed description of the testing host architecture can be found in the LaTeX document. 
 
 # Licence
 * Source code, scripts, and build files: AGPL-3.0-or-later.
