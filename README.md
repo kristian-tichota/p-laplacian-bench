@@ -6,7 +6,7 @@ The purpose of this repository is transparency and reproducible research. Parts 
 
 
 # Benchmarking
-The file `benchmark.org` serves as a literate programming dashboard for comfortably executing benchmarks. It briefly explains the parameters, metrics, and usage via examples. The benchmarks provide empirical comparisons (e.g. sparse vs non-sparse implementations) that validate theoretical claims.
+The file `benchmark.org` serves as a literate programming dashboard for comfortably executing benchmarks. It briefly explains the parameters, metrics, and usage via examples. The benchmarks provide sample empirical comparisons (e.g. sparse vs non-sparse implementations) that validate theoretical claims and show via examples how to define the parameter space for custom benchmarks. There is also a brief tutorial section dedicated to replicating the results from the LaTeX article.
 
 **For Emacs Users:**
 1. Open `benchmark.org` in Emacs.
