@@ -9,3 +9,13 @@
 *.out
 *.pdf
 *.gz
+
+*.bbl
+*.bcf
+*.blg
+*.fls
+*.xml
+*.toc
+*.fdb_latexmk
+docs/.auctex-auto/
+docs/sections/.auctex-auto/
