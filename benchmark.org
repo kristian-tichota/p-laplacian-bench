@@ -3,14 +3,14 @@
 * Parameter Overview
 These parameters are used when defining the parameter space for testing:
 
-| Parameter | Type  | Description                                  | Typical Range           |
-|-----------+-------+----------------------------------------------+-------------------------|
-| p         | Float | Power index                                  | > 2                     |
-| Nx        | Int   | Grid density                                 | > 10                    |
-| epsilon   | Float | Regularization parameter for the p-Laplacian | ~ 1e-6                  |
-| method    | Str   | ODE integration method                       | BDF, Radau, LSODA, RK45 |
-| sparse    | Bool  | Jacobian sparsity utilization                | True, False             |
-| T         | Float | Simulation stopping time                     | [0.001, 0.5]            |
+| Parameter | Type  | Description                                  | Typical Range                  |
+|-----------+-------+----------------------------------------------+--------------------------------|
+| p         | Float | Power index                                  | > 2                            |
+| Nx        | Int   | Grid density                                 | > 10                           |
+| epsilon   | Float | Regularization parameter for the p-Laplacian | ~ 1e-6                         |
+| method    | Str   | ODE integration method                       | BDF, Radau, LSODA, RK45, CVODE |
+| sparse    | Bool  | Jacobian sparsity utilization                | True, False                    |
+| T         | Float | Simulation stopping time                     | [0.001, 0.5]                   |
 
 * Metrics
 For each parameter combination, the following metrics are evaluated:
@@ -23,17 +23,32 @@ For each parameter combination, the following metrics are evaluated:
 | gev        | Gradient Evaluations                    | Jacobian matrix computation     |
 | lu         | LU Decompositions                       | ---                             |
 
+* Trials
+To replicate all results in the LaTeX document, you can run the following script:
+#+begin_src bash :results output
+python main.py trials
+#+end_src
+
+If you wish to run only particular sections, specify an argument:
+#+begin_src bash :results output
+python main.py trials --sparsity
+#+end_src
+
+The available arguments are:
+
+| Argument     | Description                     |
+|--------------+---------------------------------|
+| --sparsity   | Sparse vs. Nonsparse            |
+| --work       | Work-Effort (LSODA, BDF, RADAU) |
+| --epsilon    | Epsilon parameter sweep         |
+| --psweep     | Index p parameter sweep         |
+| --cvode_work | Work-Effort (CVODE, LSODA)      |
+| --extreme_nx | Nx extreme scaling              |
+| --extreme_p  | p extreme scaling               |
+
 * Sparse Vs. Nonsparse
 As Nx becomes large, the overhead of sparsifying the matrix becomes negligible and computation time is drastically reduced:  
 #+begin_src bash :results output
-python main.py benchmark --Nx 500 --eps=1e-6 --methods CVODE LSODA --p 2.5
+python main.py benchmark --Nx 50 100 200 500 --eps=1e-6 --methods CVODE LSODA BDF --p 2.5
 #+end_src
 
-#+RESULTS:
-: Starting benchmark suite with 4 configurations...
-: 
-:   -> Generating ground truth for p=2.5, eps=1e-06, Nx=500...
-: [ 1/4] CVODE | Sparse: True        | p: 2.5 | eps: 1e-06   | Nx: 500  | Err: nan | Time:     N/A | fev: 0    | gev: 0   | lu: 0   -> Failed: ValueError
-: [ 2/4] CVODE | Sparse: False       | p: 2.5 | eps: 1e-06   | Nx: 500  | Err: nan | Time:     N/A | fev: 0    | gev: 0   | lu: 0   -> Failed: ValueError
-: [ 3/4] LSODA | Sparse: True        | p: 2.5 | eps: 1e-06   | Nx: 500  | Err: 1.24e-07 | Time: 0.0279s | fev: 1552 | gev: 98  | lu: 98  -> Success
-: [ 4/4] LSODA | Sparse: False       | p: 2.5 | eps: 1e-06   | Nx: 500  | Err: 1.25e-07 | Time: 0.7112s | fev: 50663 | gev: 99  | lu: 99  -> Success
