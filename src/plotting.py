@@ -313,7 +313,7 @@ def plot_sparsity_scaling(df: pd.DataFrame):
 def plot_singular_epsilon(df: pd.DataFrame):
     """Heatmap for the singular epsilon crash test."""
     plot_df = df.copy()
-    success_mask = (plot_df['status'] == 'Success') & (plot_df['error_l2'].notna())
+    success_mask = (plot_df['status'] == 'Success')
     successes = plot_df[success_mask]
     if successes.empty:
         print("No successful runs to plot.")
@@ -332,9 +332,7 @@ def plot_singular_epsilon(df: pd.DataFrame):
 
     for ax, method in zip(axes, methods):
         ax.set_facecolor("#ff4c4c")
-        m_df = plot_df[(plot_df['method'] == method) &
-                       (plot_df['status'] == 'Success') &
-                       (plot_df['error_l2'].notna())]
+        m_df = plot_df[(plot_df['method'] == method) & (plot_df['status'] == 'Success')]
         pivot = m_df.pivot(index='p', columns='epsilon', values='duration_s')
         pivot = pivot.reindex(index=p_vals, columns=eps_vals)
 

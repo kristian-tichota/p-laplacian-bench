@@ -23,7 +23,7 @@ def generate_reference_solution(p, epsilon, Nx, T):
     return data[T]
 
 
-def run_single_benchmark(params, ref_u=None, T=0.05, trials=3):
+def run_single_benchmark(params, ref_u=None, T=0.05, trials=3, check_propagation=False):
     """Executes a solver run and compares it against the reference array (if provided)."""
     method, sparse, p, epsilon, Nx, tol = params
 
@@ -56,6 +56,20 @@ def run_single_benchmark(params, ref_u=None, T=0.05, trials=3):
         else:
             error_l2 = np.nan
 
+        # ── Propagation check (only when no reference is provided) ─
+        if check_propagation and ref_u is None and test_u is not None:
+            interior = test_u[1:-1]          # exclude Dirichlet boundaries
+            if np.max(np.abs(interior)) < 0.5:
+                return {
+                    "duration_s": best_time,
+                    "status": "Failed: No propagation (trivial solution)",
+                    "sparse": str(sparse),
+                    "nfev": stats.get("nfev", 0),
+                    "njev": stats.get("njev", 0),
+                    "nlu": stats.get("nlu", 0),
+                    "error_l2": np.nan,
+                }
+            
         return {
             "duration_s": best_time,
             "status": "Success",
@@ -69,7 +83,7 @@ def run_single_benchmark(params, ref_u=None, T=0.05, trials=3):
     except Exception as e:
         return {"duration_s": np.nan, "status": f"Failed: {type(e).__name__}"}
 
-def benchmark_suite(param_grid, T=0.05, compute_error=True):
+def benchmark_suite(param_grid, T=0.05, compute_error=True, run_kwargs=None):
     """Iterates through the parameter grid and compiles results."""
     keys, values = zip(*param_grid.items())
     experiments = [dict(zip(keys, v)) for v in itertools.product(*values)]
@@ -99,7 +113,7 @@ def benchmark_suite(param_grid, T=0.05, compute_error=True):
                 except Exception as e:
                     print(f"  -> Ground truth generation failed: {e}")
                     reference_cache[ref_key] = None
-            
+                    
             ref_u = reference_cache[ref_key]
 
             if ref_u is None:
@@ -108,7 +122,8 @@ def benchmark_suite(param_grid, T=0.05, compute_error=True):
                 continue
 
         params = (exp["method"], exp["sparse"], p, eps, Nx, tol)
-        metrics = run_single_benchmark(params, ref_u=ref_u, T=T)
+        kw = run_kwargs if run_kwargs else {}
+        metrics = run_single_benchmark(params, ref_u=ref_u, T=T, **kw)
 
         exp.update(metrics)
         results.append(exp)
