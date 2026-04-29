@@ -1,12 +1,12 @@
 \subsection{Sparsity}
 
-The computational cost of time integration can be reduced by several orders of magnitude by specifying the sparsity pattern of the Jacobian matrix. Because the spatial discretization relies on local neighborhood stencils, the resulting Jacobian matrix is highly banded (tridiagonal). 
+The computational cost of time integration can be reduced by several orders of magnitude by specifying the sparsity pattern of the Jacobian matrix. Because the spatial discretization relies on local neighborhood stencils, the resulting Jacobian matrix is highly banded (tridiagonal).
 
 In Figure \ref{fig:sparsity-test}, we compare the execution times of LSODA and BDF solvers using dense versus sparse Jacobians across varying grid resolutions \(N_x\). The test parameters are fixed at \(p = 2.5\), \(\varepsilon = 10^{-6}\), and \(T = 0.05\).
 
-The results highlight two distinct computational regimes. For very small grids (\(N_x \le 100\)), the dense implementation of BDF slightly outperforms its sparse counterpart. This is likely due to the inherent overhead required to allocate sparse data structures and track pointer indices, which tends to dominate the execution time when the total number of operations is low. 
+The results highlight two distinct computational regimes. For very small grids (\(N_x \le 100\)), the dense implementation of BDF slightly outperforms its sparse counterpart. This is likely due to the inherent overhead required to allocate sparse data structures and track pointer indices, which tends to dominate the execution time when the total number of operations is low.
 
-However, as \(N_x\) increases, the dense solvers exhibit \(O(N_x^3)\) scaling, reflecting the dense LU factorization required during implicit solver steps. For example, doubling \(N_x\) from 1000 to 2000 in the dense LSODA solver increases the execution time by a factor of roughly seven (from 9.88s to 69.54s). Conversely, the sparse variants appear to scale linearly, \(O(N_x)\). At the highest resolution tested (\(N_x = 2000\)), utilizing a sparse Jacobian in LSODA reduces the execution time from 69.5 seconds to 0.329 seconds, achieving a speedup of roughly \(212\times\). 
+However, as \(N_x\) increases, the dense solvers exhibit \(\mathcal{O}(N_x^3)\) scaling, reflecting the dense LU factorization required during implicit solver steps. For example, doubling \(N_x\) from 1000 to 2000 in the dense LSODA solver increases the execution time by a factor of roughly 7.7 (from 8.97s to 69.24s). Conversely, the sparse variants appear to scale linearly, \(\mathcal{O}(N_x)\). At the highest resolution tested (\(N_x = 2000\)), utilizing a sparse Jacobian in LSODA reduces the execution time from 69.24 seconds to 0.33 seconds, achieving a speedup of roughly \(207\times\).
 
 Furthermore, the data shows that LSODA consistently outperforms the standard BDF implementation across all grid sizes for this specific parameter set. This suggests that LSODA's method-switching heuristics may navigate the problem's stiffness more efficiently than a pure BDF approach in this scenario.
 

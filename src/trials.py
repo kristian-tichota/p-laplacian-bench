@@ -174,7 +174,7 @@ def plot_sparsity_scaling(df):
 
     plt.figure(figsize=(9, 6))
     
-    sparse_df = plot_df[plot_df["sparse"] == True]
+    sparse_df = plot_df[plot_df["sparse"] == "True"]
     if not sparse_df.empty:
         sns.lineplot(
             data=sparse_df,
@@ -189,7 +189,7 @@ def plot_sparsity_scaling(df):
             markersize=9,
         )
 
-    dense_df = plot_df[plot_df["sparse"] == False]
+    dense_df = plot_df[plot_df["sparse"] == "False"]
     if not dense_df.empty:
         ax = sns.lineplot(
             data=dense_df,
@@ -220,13 +220,16 @@ def plot_sparsity_scaling(df):
         if l not in unique_legend and l in METHOD_STYLE:
             unique_legend[l] = h
             
+    sparse_handle, = ax.plot([], [], color='gray', linestyle='-')
+    dense_handle, = ax.plot([], [], color='gray', linestyle='--')
+            
     ax.legend(
-        unique_legend.values(), 
-        unique_legend.keys(), 
+        list(unique_legend.values()) + [sparse_handle, dense_handle], 
+        list(unique_legend.keys()) + ["Sparse", "Dense"], 
         bbox_to_anchor=(1.05, 1), 
         loc='upper left', 
         frameon=True, 
-        title="Method"
+        title="Method & Sparsity"
     )
 
     plt.tight_layout()
@@ -234,7 +237,6 @@ def plot_sparsity_scaling(df):
     plt.close()
     print("Saved sparsity_scaling.pdf")
     export_detailed_log(df, "sparsity_scaling.pdf")
-
 def plot_work_effort(df):
     plot_df = df[(df["status"] == "Success") & (df["error_l2"] > 0)].copy()
     if plot_df.empty:
