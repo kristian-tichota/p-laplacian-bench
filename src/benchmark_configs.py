@@ -12,7 +12,8 @@ class BenchmarkConfig:
     T: float = 0.05
     compute_error: bool = False
     plot_func: Optional[Callable] = None
-    run_func: Optional[Callable] = None   # custom run function if needed
+    run_func: Optional[Callable] = None
+    run_kwargs: Optional[dict] = None
     plot_filename: str = "benchmark.pdf"
 
 
@@ -129,13 +130,14 @@ benchmarks = {
         grid={
             "method": ["LSODA", "CVODE"],
             "sparse": [True],
-            "p": [1.25, 1.1, 1.0],
-            "epsilon": [1e-6, 1e-8, 1e-10, 1e-12, 1e-14, 1e-16, 1e-30, 0.0],
+            "p": [1.25, 1.1, 1.05, 1.01],
+            "epsilon": [1e-6, 1e-8, 1e-10, 1e-12, 1e-14, 1e-30],
             "Nx": [200],
             "tol": [1e-13],
         },
         T=0.05,
-        compute_error=False,          # <-- errors are not computed
+        compute_error=False,
+        run_kwargs={"check_propagation": True},
         plot_func=plots.plot_singular_epsilon,
         plot_filename="stability_matrix.pdf",
     ),
