@@ -1,0 +1,22 @@
+name: fenicsx_env
+channels:
+  - conda-forge
+  - nodefaults
+dependencies:
+  - python=3.13
+  - fenics-dolfinx
+  - scikits.odes
+  - contourpy
+  - cycler
+  - fonttools
+  - kiwisolver
+  - matplotlib
+  - numba
+  - numpy
+  - packaging
+  - pandas
+  - pillow
+  - pyparsing
+  - python-dateutil
+  - scipy
+  - seaborn

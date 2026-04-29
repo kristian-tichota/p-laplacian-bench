@@ -27,7 +27,7 @@ def main():
     trials_parser.add_argument("--extreme-nx", action="store_true", help="Run the massive Nx scaling benchmark")
     trials_parser.add_argument("--extreme-p", action="store_true", help="Run the hyper-degenerate p scaling benchmark")
     trials_parser.add_argument("--all", action="store_true", help="Run all available benchmarks")
-
+    trials_parser.add_argument("--singular-epsilon", action="store_true", help="Run the singular regime (p=1.25) epsilon crash test")
 
     
     bench_parser.add_argument(

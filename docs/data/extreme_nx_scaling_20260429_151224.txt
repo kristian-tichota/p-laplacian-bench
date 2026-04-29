@@ -1,0 +1,17 @@
+Detailed Calculation Logs: extreme_nx_scaling
+Generated at: 20260429_151224
+====================================================================================================
+method sparse   p  epsilon     Nx      tol  duration_s  status  nfev  njev  nlu  error_l2
+ LSODA   True 2.5 0.000001   1000 0.000001    0.111856 Success  3431   338  338       NaN
+ LSODA   True 2.5 0.000001   5000 0.000001    1.331743 Success  8645  1131 1131       NaN
+ LSODA   True 2.5 0.000001  10000 0.000001    3.695441 Success 12088  1680 1680       NaN
+ LSODA   True 2.5 0.000001  25000 0.000001   12.953391 Success 16862  2497 2497       NaN
+ LSODA   True 2.5 0.000001  50000 0.000001   41.133827 Success 26550  4243 4243       NaN
+ LSODA   True 2.5 0.000001 100000 0.000001  143.477882 Success 47132  8301 8301       NaN
+ CVODE   True 2.5 0.000001   1000 0.000001    0.109738 Success  3080     0  428       NaN
+ CVODE   True 2.5 0.000001   5000 0.000001    1.310333 Success  6773     0 1626       NaN
+ CVODE   True 2.5 0.000001  10000 0.000001    4.353631 Success 10967     0 2952       NaN
+ CVODE   True 2.5 0.000001  25000 0.000001   12.180975 Success 11760     0 3386       NaN
+ CVODE   True 2.5 0.000001  50000 0.000001   45.148991 Success 21717     0 6460       NaN
+ CVODE   True 2.5 0.000001 100000 0.000001  118.498588 Success 26800     0 8905       NaN
+====================================================================================================

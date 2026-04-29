@@ -1,0 +1,33 @@
+Detailed Calculation Logs: sparsity_scaling
+Generated at: 20260429_143551
+====================================================================================================
+method sparse   p  epsilon   Nx      tol  duration_s  status    nfev  njev  nlu  error_l2
+ LSODA   True 2.5 0.000001   50 0.000001    0.003148 Success     763    17   17       NaN
+ LSODA   True 2.5 0.000001  100 0.000001    0.005597 Success     993    36   36       NaN
+ LSODA   True 2.5 0.000001  200 0.000001    0.012431 Success    1464    83   83       NaN
+ LSODA   True 2.5 0.000001  500 0.000001    0.040955 Success    2381   194  194       NaN
+ LSODA   True 2.5 0.000001 1000 0.000001    0.111451 Success    3431   338  338       NaN
+ LSODA   True 2.5 0.000001 1500 0.000001    0.212989 Success    4478   494  494       NaN
+ LSODA   True 2.5 0.000001 2000 0.000001    0.328521 Success    5202   594  594       NaN
+ LSODA  False 2.5 0.000001   50 0.000001    0.004546 Success    1545    17   17       NaN
+ LSODA  False 2.5 0.000001  100 0.000001    0.014534 Success    4449    36   36       NaN
+ LSODA  False 2.5 0.000001  200 0.000001    0.121373 Success   17732    83   83       NaN
+ LSODA  False 2.5 0.000001  500 0.000001    1.545517 Success   98602   194  194       NaN
+ LSODA  False 2.5 0.000001 1000 0.000001    9.881773 Success  340098   338  338       NaN
+ LSODA  False 2.5 0.000001 1500 0.000001   35.227359 Success  698498   464  464       NaN
+ LSODA  False 2.5 0.000001 2000 0.000001   69.536416 Success 1156802   577  577       NaN
+   BDF   True 2.5 0.000001   50 0.000001    0.064823 Success     627    36   75       NaN
+   BDF   True 2.5 0.000001  100 0.000001    0.093605 Success     818    80  131       NaN
+   BDF   True 2.5 0.000001  200 0.000001    0.206318 Success    1064   144  215       NaN
+   BDF   True 2.5 0.000001  500 0.000001    0.708278 Success    2006   283  480       NaN
+   BDF   True 2.5 0.000001 1000 0.000001    1.923315 Success    3091   444  817       NaN
+   BDF   True 2.5 0.000001 1500 0.000001    3.592875 Success    3786   577 1032       NaN
+   BDF   True 2.5 0.000001 2000 0.000001    5.299215 Success    4193   664 1182       NaN
+   BDF  False 2.5 0.000001   50 0.000001    0.030611 Success     627    36   75       NaN
+   BDF  False 2.5 0.000001  100 0.000001    0.066367 Success     818    80  131       NaN
+   BDF  False 2.5 0.000001  200 0.000001    0.329557 Success    1065   144  215       NaN
+   BDF  False 2.5 0.000001  500 0.000001    2.917822 Success    2006   283  480       NaN
+   BDF  False 2.5 0.000001 1000 0.000001   23.460500 Success    3091   444  817       NaN
+   BDF  False 2.5 0.000001 1500 0.000001   70.350596 Success    3795   574 1033       NaN
+   BDF  False 2.5 0.000001 2000 0.000001  146.830718 Success    4199   663 1181       NaN
+====================================================================================================

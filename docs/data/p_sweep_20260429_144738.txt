@@ -1,0 +1,23 @@
+Detailed Calculation Logs: p_sweep
+Generated at: 20260429_144738
+====================================================================================================
+method sparse   p  epsilon   Nx      tol  duration_s  status  nfev  njev  nlu  error_l2
+ LSODA   True 1.5   0.0001 1000 0.000001    0.022752 Success   597    51   51       NaN
+ LSODA   True 1.8   0.0001 1000 0.000001    0.022249 Success   697    34   34       NaN
+ LSODA   True 2.0   0.0001 1000 0.000001    0.013703 Success   587    23   23       NaN
+ LSODA   True 2.5   0.0001 1000 0.000001    0.093820 Success  2888   243  243       NaN
+ LSODA   True 3.0   0.0001 1000 0.000001    0.287689 Success  8497   788  788       NaN
+ LSODA   True 4.0   0.0001 1000 0.000001    0.529118 Success 14634  1209 1209       NaN
+   BDF   True 1.5   0.0001 1000 0.000001    0.076896 Success   382    12   44       NaN
+   BDF   True 1.8   0.0001 1000 0.000001    0.065026 Success   399     8   44       NaN
+   BDF   True 2.0   0.0001 1000 0.000001    0.038099 Success   380     1   41       NaN
+   BDF   True 2.5   0.0001 1000 0.000001    1.472857 Success  2183   355  532       NaN
+   BDF   True 3.0   0.0001 1000 0.000001    5.582491 Success 12927  1053 3515       NaN
+   BDF   True 4.0   0.0001 1000 0.000001    9.109333 Success 19225  1847 4746       NaN
+ Radau   True 1.5   0.0001 1000 0.000001    0.173155 Success   718    29  146       NaN
+ Radau   True 1.8   0.0001 1000 0.000001    0.118002 Success   662    15  124       NaN
+ Radau   True 2.0   0.0001 1000 0.000001    0.060814 Success   637     2   94       NaN
+ Radau   True 2.5   0.0001 1000 0.000001    3.939481 Success 14392   639 3780       NaN
+ Radau   True 3.0   0.0001 1000 0.000001    7.602203 Success 26015  1306 6518       NaN
+ Radau   True 4.0   0.0001 1000 0.000001   11.835523 Success 38201  2122 8686       NaN
+====================================================================================================
