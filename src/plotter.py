@@ -6,10 +6,10 @@ from .solver import PLaplacianSolver
 from .live_plot import LivePlotHook
 
 
-def run_simulation(live=False):
+def run_simulation(live=False, p=4.5, Nx=5000, epsilon=1e-6, tol=1e-6, method="LSODA"):
     times_to_plot = [0.001, 0.005, 0.015, 0.035, 0.065]
 
-    model = PLaplacianModel(p=4.5, h=1.0, Nx=5000)
+    model = PLaplacianModel(p=p, h=1.0, Nx=Nx, epsilon=epsilon)
     solver = PLaplacianSolver(model)
 
     if live:
@@ -17,7 +17,7 @@ def run_simulation(live=False):
         import threading
         # Run integration in a background thread, hook records frames
         threading.Thread(target=solver.solve, args=(times_to_plot,),
-                         kwargs={"hook": hook}, daemon=True).start()
+                         kwargs={"method": method, "hook": hook, "rtol": tol, "atol": tol}, daemon=True).start()
         # Block main thread with the replay GUI
         hook.start_plotter()
         return {}, {}

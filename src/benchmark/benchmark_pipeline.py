@@ -60,9 +60,33 @@ class BenchmarkPipeline:
     def run_grid(self, param_grid: dict, T: float = 0.05, compute_error: bool = True) -> pd.DataFrame:
         keys, values = zip(*param_grid.items())
         experiments = [dict(zip(keys, v)) for v in itertools.product(*values)]
+        
+        total_runs = len(experiments)
         results = []
-        for exp in experiments:
+        
+        for i, exp in enumerate(experiments, start=1):
             res = self.run_experiment(exp, T, compute_error)
             results.append(res)
-            print(f'{exp["method"]:6} {exp["sparse"]!s:5} {res["duration_s"]:.3f}s')
+            
+            method = exp.get("method", "Unknown")
+            
+            params_str = ", ".join(f"{k}={v}" for k, v in exp.items() if k != "method")
+            
+            status = res.get("status", "")
+            duration = res.get("duration_s", 0.0)
+            
+            if "Success" in status:
+                stats = (
+                    f"time={duration:.3f}s, "
+                    f"nfev={res.get('nfev', 0)}, "
+                    f"njev={res.get('njev', 0)}, "
+                    f"nlu={res.get('nlu', 0)}"
+                )
+                if compute_error and pd.notna(res.get("error_l2")):
+                    stats += f", err={res['error_l2']:.2e}"
+            else:
+                stats = f"FAILED ({status})"
+                
+            print(f"[{i}/{total_runs}] {method:5} | {params_str} | {stats}")
+            
         return pd.DataFrame(results)

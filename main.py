@@ -38,8 +38,12 @@ def build_parser():
     subparsers = parser.add_subparsers(dest="command", required=True)
 
     sim_parser = subparsers.add_parser("simulate", help="Run a standard simulation")
-    sim_parser.add_argument("--live", action="store_true",
-                            help="Enable real‑time GPU‑accelerated plotting")
+    sim_parser.add_argument("--live", action="store_true", help="Enable real‑time GPU‑accelerated plotting")
+    sim_parser.add_argument("--p", type=float, default=4.5, help="Nonlinearity index")
+    sim_parser.add_argument("--Nx", type=int, default=5000, help="Grid resolution")
+    sim_parser.add_argument("--epsilon", type=float, default=1e-6, help="Regularization parameter")
+    sim_parser.add_argument("--tol", type=float, default=1e-6, help="Solver tolerance (rtol/atol)")
+    sim_parser.add_argument("--method", type=str, default="LSODA", help="Solver backend method")
 
     bench_parser = subparsers.add_parser("benchmark", help="Run a custom benchmark grid")
     bench_parser.add_argument("--Nx", type=int, nargs="+",
@@ -54,7 +58,7 @@ def build_parser():
                               help="Simulation end time")
     bench_parser.add_argument("--skip-error", action="store_true",
                               help="Do not compute reference L2 error")
-
+    bench_parser.add_argument("--tol", type=float, nargs="+", default=[1e-3], help="Solver tolerances to test")
     trials_parser = subparsers.add_parser("trials", help="Run preset benchmark suite")
     trials_parser.add_argument("--all", action="store_true",
                                help="Run all available benchmarks")
@@ -75,7 +79,14 @@ if __name__ == "__main__":
     print("JIT ready!")
     
     if args.command == "simulate":
-        run_simulation(live=args.live)
+        run_simulation(
+            live=args.live,
+            p=args.p,
+            Nx=args.Nx,
+            epsilon=args.epsilon,
+            tol=args.tol,
+            method=args.method
+        )
 
     elif args.command == "benchmark":
         grid = {
@@ -84,6 +95,7 @@ if __name__ == "__main__":
             "p": args.p,
             "epsilon": args.epsilon,
             "Nx": args.Nx,
+            "tol": args.tol
         }
         df = benchmark_suite(grid, T=args.T, compute_error=not args.skip_error)
         print(df.to_string(index=False))

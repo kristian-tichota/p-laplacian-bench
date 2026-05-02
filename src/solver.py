@@ -63,21 +63,21 @@ class PLaplacianSolver:
             min_interior = interiors.min()
             max_abs_interior = np.abs(interiors).max()
 
-            # 1) Interior ever above 1.001 ?
+            # 1) Interior ever above 1.001?
             if max_interior > 1.001:
                 return full_data, SolverStats(
                     False,
                     f"Propagation error: interior exceeded 1.0 (max={max_interior:.6f})",
                     result.stats.nfev, result.stats.njev, result.stats.nlu
                 )
-            # 2) Max absolute value never above 0.001 ?
+            # 2) Max absolute value never above 0.001?
             if max_abs_interior <= 0.001:
                 return full_data, SolverStats(
                     False,
                     "Propagation failure: solution did not propagate (max|interior| ≤ 0.001)",
                     result.stats.nfev, result.stats.njev, result.stats.nlu
                 )
-            # 3) Interior ever below -0.001 ?
+            # 3) Interior ever below -0.001?
             if min_interior < -0.001:
                 return full_data, SolverStats(
                     False,
