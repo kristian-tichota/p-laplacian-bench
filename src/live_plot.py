@@ -23,7 +23,7 @@ class LivePlotHook:
         self._last_t = 0.0
         self._last_u = None
         self._next_frame_t = 0.0
-        self.history = []  # will be populated by the GUI's consumer
+        self.history = []
 
     def __call__(self, t, u):
         """Called by the solver at every RHS evaluation."""
@@ -136,7 +136,7 @@ class LivePlotHook:
             self.replay_float_idx = 0.0
             slider.setValue(0)
             total_ticks_in_10s = 10.0 * self.fps
-            self.replay_speed = max(1.0, len(self._history_local) / total_ticks_in_10s)
+            self.replay_speed = len(self._history_local) / total_ticks_in_10s
             self.replay_timer.start(int(1000 / self.fps))
 
         def step_replay():

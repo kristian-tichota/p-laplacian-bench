@@ -234,7 +234,7 @@ def plot_sparsity_scaling(df: pd.DataFrame):
 
     fig, ax = plt.subplots(figsize=(9, 6))
 
-    sparse_df = plot_df[plot_df["sparse"] == "True"]
+    sparse_df = plot_df[plot_df["sparse"] == True]
     if not sparse_df.empty:
         sns.lineplot(
             data=sparse_df,
@@ -247,7 +247,7 @@ def plot_sparsity_scaling(df: pd.DataFrame):
             ax=ax,
         )
 
-    dense_df = plot_df[plot_df["sparse"] == "False"]
+    dense_df = plot_df[plot_df["sparse"] == False]
     if not dense_df.empty:
         sns.lineplot(
             data=dense_df,
