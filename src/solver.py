@@ -16,9 +16,8 @@ class PLaplacianSolver:
 
     def solve(self, times, hook: Optional[SolverHook] = None, check_propagation: bool = False):
         t_eval = np.sort(times)
-        y0 = np.zeros(self.model.Nx - 1)  # interior only
+        y0 = np.zeros(self.model.Nx - 1)
 
-        # Select backend
         if self.config.method.upper() in ("CVODE", "IDA"):
             backend = SundialsSolver()
         else:
@@ -46,7 +45,6 @@ class PLaplacianSolver:
             full[-1] = 0.0
             full_data[t] = full
 
-        # Propagation sanity checks (unchanged)
         if check_propagation:
             if not result.stats.success:
                 return full_data, result.stats
