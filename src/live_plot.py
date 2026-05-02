@@ -2,24 +2,22 @@ import numpy as np
 import queue
 import time
 from src.physics import fast_p_laplacian_rhs
+from src.model import PLaplacianModel
 
 class LivePlotHook:
     """
     Records integration snapshots for later replay.
     Implements the SolverHook protocol: callable(t, y).
     """
-    def __init__(self, Nx, dx, p, h, epsilon, fps=144, sim_dt_per_frame=0.0002):
-        self.Nx = Nx
-        self.dx = dx
-        self.p = p
-        self.h = h
-        self.epsilon = epsilon
-
+    def __init__(self, model: PLaplacianModel, fps=144, sim_dt_per_frame=0.0002):
+        self.Nx = model.Nx
+        self.dx = model.dx
+        self.p = model.p
+        self.h = model.h
+        self.epsilon = model.epsilon
         self.fps = fps
         self.sim_dt_per_frame = sim_dt_per_frame
-
         self.frame_queue = queue.Queue(maxsize=30)
-
         self._last_t = 0.0
         self._last_u = None
         self._next_frame_t = 0.0
@@ -32,7 +30,6 @@ class LivePlotHook:
             self._last_u = u.copy()
             self._next_frame_t = t
             return
-
         if t > self._last_t + 1e-12:
             while self._next_frame_t <= t:
                 weight = (self._next_frame_t - self._last_t) / (t - self._last_t)

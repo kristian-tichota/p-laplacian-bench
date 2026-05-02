@@ -6,8 +6,8 @@ import src.plotting as plots
 
 @dataclass
 class BenchmarkConfig:
-    name: str               # human-readable identifier
-    flag: str               # CLI flag (e.g. "sparsity")
+    name: str
+    flag: str               # CLI flag
     grid: dict              # parameter grid for benchmark_suite
     T: float = 0.05
     compute_error: bool = False
@@ -16,8 +16,6 @@ class BenchmarkConfig:
     run_kwargs: Optional[dict] = None
     plot_filename: str = "benchmark.pdf"
 
-
-# ── Registry of all benchmarks ─────────────────────────────────────
 benchmarks = {
     "sparsity": BenchmarkConfig(
         name="sparsity",

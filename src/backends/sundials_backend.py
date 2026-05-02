@@ -2,9 +2,11 @@
 import numpy as np
 from typing import Callable, Optional
 from .base import SolverBackend, SolverResult, SolverStats
+from ..hooks import SolverHook
 
 class SundialsSolver:
-    def solve(self, t_eval, y0, rhs, sparsity=None, rtol=1e-6, atol=1e-6, **kwargs):
+    def solve(self, t_eval, y0, rhs, sparsity=None, rtol=1e-6, atol=1e-6,
+              hook: Optional[SolverHook] = None, **kwargs):
         try:
             from scikits.odes import ode
         except ImportError as exc:
@@ -14,7 +16,15 @@ class SundialsSolver:
         options = dict(rtol=rtol, atol=atol,
                        max_steps=kwargs.get("max_steps", 1000000),
                        lband=1, uband=1, linsolver="band")
-        solver = ode(method, lambda t, y, ydot: ydot.__setitem__(slice(None), rhs(t, y)), **options)
+        
+        # Wrap the RHS so the hook is called at every evaluation
+        def rhs_with_hook(t, y, ydot):
+            dydt = rhs(t, y)
+            if hook:
+                hook(t, y.copy())   # copy to avoid mutation during live plotting
+            ydot[:] = dydt
+
+        solver = ode(method, rhs_with_hook, **options)
 
         t_vec = np.array(t_eval)
         if t_vec[0] != 0.0:
