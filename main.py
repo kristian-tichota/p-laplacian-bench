@@ -1,5 +1,5 @@
 import argparse
-from src.trials import main as run_trials
+from trials import main as run_trials
 from src.plotter import run_simulation
 from src.benchmark import benchmark_suite
 
@@ -13,6 +13,7 @@ def main():
     sim_parser = subparsers.add_parser(
         "simulate", help="Run a standard simulation and generate plots"
     )
+    sim_parser.add_argument("--live", action="store_true", help="Enable realtime GPU-accelerated plotting during integration")
 
     bench_parser = subparsers.add_parser(
         "benchmark", help="Run the intelligent benchmarking suite"
@@ -77,7 +78,7 @@ def main():
     args = parser.parse_args()
 
     if args.task == "simulate":
-        run_simulation()
+        run_simulation(live=args.live)
 
     elif args.task == "benchmark":
         grid = {

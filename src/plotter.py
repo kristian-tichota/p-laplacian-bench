@@ -4,11 +4,11 @@ import matplotlib.cm as cm
 from src.solver import PLaplacianSolver
 
 
-def run_simulation():
+def run_simulation(live=False):
     times_to_plot = [0.001, 0.005, 0.015, 0.035, 0.065]
 
-    model = PLaplacianSolver(p=2.5, h=1.0, Nx=1000)
-    results, stats = model.solve(times_to_plot)
+    model = PLaplacianSolver(p=2.1, h=1.0, Nx=9000)
+    results, stats = model.solve(times_to_plot, live_plot=live)
     x = model.x
 
     fig, ax = plt.subplots(figsize=(10, 6), dpi=120)
