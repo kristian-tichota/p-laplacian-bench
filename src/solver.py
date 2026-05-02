@@ -6,7 +6,7 @@ import threading
 
 
 class PLaplacianSolver:
-    def __init__(self, p, h, L=1.0, Nx=1000, epsilon=1e-6):
+    def __init__(self, p, h, L=1.0, Nx=1000, epsilon=1e-20):
         self.p = p
         self.h = h
         self.Nx = Nx
