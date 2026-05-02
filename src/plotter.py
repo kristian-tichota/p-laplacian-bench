@@ -7,7 +7,7 @@ from .config import SimulationConfig
 from .live_plot import LivePlotHook
 
 def run_simulation(config: SimulationConfig, live: bool = False):
-    times_to_plot = [0.001, 0.005, 0.015, 0.035, 0.065]
+    times_to_plot = [0.005, 0.015, 0.035, 0.065]
 
     model = config.to_model()
     solver = PLaplacianSolver(model, config)
