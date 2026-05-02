@@ -1,0 +1,17 @@
+\section{Singular Epsilon}
+Figure \ref{fig:singular-epsilon} details the breaking points of the LSODA and CVODE solvers as \(p \to 1\) and \(\varepsilon \to 0\). The solvers operate under very strict tolerances \(\texttt{rtol} = \texttt{atol} = 10^{-13}\) with \(N_x=1000\).
+
+As the nonlinearity index \(p\) approaches 1, the diffusion operator becomes highly singular in regions where the spatial gradient is near zero. The regularization parameter \(\varepsilon\) masks this singularity; however, driving \(\varepsilon \to 0\) exposes the numerical integrators to extreme stiffness and severely ill-conditioned Jacobians. The heatmap illustrates that neither solver is universally resilient.
+
+LSODA demonstrates a predictable failure boundary. At highly singular indices (\(p \leq 1.05\)), it consistently encounters catastrophic failures (indicated in red) once \(\varepsilon\) drops below \(10^{-8}\). Yet, at a slightly elevated index of \(p = 1.25\), LSODA manages to integrate the system across the entire regularization sweep down to \(\varepsilon = 10^{-30}\). Nonetheless, this survival comes at a steep computational cost, visibly indicated by the transition into green and yellow execution times as the stifness intensifies.
+
+CVODE, on the other hand, exhibits a rather erratic failure topology. It generally collapses at \(\varepsilon \leq 10^{-12}\) for indices like \(p = 1.25\) and \(p = 1.01\). However, there is an anomalous stability pocket at \(p=1.05\). In this regime, CVODE successfully evaluates the physics down to \(\varepsilon=10^{-14}\) without significant time penalties, before finally encountering a catastrophic failure at the \(10^{-30}\) extreme.
+
+Interestingly, the catastrophic failures observed in the CVODE backend within this singular regime are highly sensitive to the distance of the first evaluation target (\texttt{tout}). Because the spatial interior is initialized to zero, the vanishing initial gradient coupled with a small \(\varepsilon\) evaluates to a large diffusion coefficient at \(t = 0\). When the solver is assigned a distant output evaluation target, e.g., \(T = 0.05\), its internal heuristics likely attempt to maximize computational efficiency by estimating a proportionally large initial time step \(h_0\). This might push the internal Newton iterations into a regime of non-convergence and consequently trap the solver in a step-size reduction loop until it exhausts its maximum internal step limit (exiting with a SUNDIALS flag -1 error). When providing a proximate initial \(\texttt{tout}\) and evenly spaced out checkpoints to \(T=0.05\), the CVODE solver finishes successfully.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=\textwidth]{images/stability_matrix.pdf}
+  \caption{Heatmap illustrating execution times and failure boundaries for LSODA and CVODE.}
+  \label{fig:singular-epsilon}
+\end{figure}
