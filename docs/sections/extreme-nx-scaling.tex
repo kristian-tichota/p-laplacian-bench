@@ -4,7 +4,7 @@ Figure \ref{fig:extreme-nx} presents an extreme spatial scaling test, pushing th
 
 Both solvers exhibit highly predictable, near-linear scaling on a log-log scale as the grid grows. The performance lead alternates depending on the grid resolution. At \(N_x = 10,000\), LSODA completes the integration in 3.70 seconds, whereas CVODE takes 4.35 seconds. However, at \(N_x = 25,000\), CVODE narrowly overtakes LSODA (12.18 seconds vs.\ 12.95 seconds). At \(N_x = 50,000\) LSODA again leads (41.1 seconds vs.\ 45.1 seconds), only for CVODE to regain the advantage at \(N_x = 100,000\), finishing in 118.5 seconds compared to LSODA's 143.5 seconds. 
 
-Overall, the performance gaps remain modest, and neither backend clearly dominates across all resolutions. The heavily optimized C-level sparse linear algebra of SUNDIALS does not translate into a decisive advantage in every regime; SciPy's LSODA stays highly competitive, with the outcome being sensitive to the exact balance of memory bandwidth, cache utilization, and linear solver overheads at each spatial scale.
+Overall, the performance gaps remain modest, and neither backend clearly dominates across all resolutions. The heavily optimized C-level sparse linear algebra of SUNDIALS does not translate into a consistent advantage in every regime; SciPy's LSODA stays highly competitive, with the outcome being sensitive to the exact balance of memory bandwidth, cache utilization, and linear solver overheads at each spatial scale.
 
 \begin{figure}[H]
   \centering
