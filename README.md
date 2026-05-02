@@ -4,6 +4,14 @@ The purpose of this repository is transparency and reproducible research. Parts 
 
 <img width="600" alt="A parameter sweep image representing the repository" src="https://github.com/user-attachments/assets/fc804a6f-1f6c-4a91-b4cf-cd1140c76d61" />
 
+The project benchmarks time integrators from the solve_ivp suite (LSODA, BDF, Radau) from SciPy alongside CVODE from the SUNDIALS library. We evaluate solver robustness using the highly nonlinear 1D p-Laplacian partial differential equation. Varying the nonlinearity index p transitions the equation across linear, singular, and strongly degenerate regimes. This provides an ideal stress test for numerical stiffness and solver resilience.
+
+# Modules
+The codebase has a modular architecture to separate physics, solver backends, and benchmarking pipelines.
+
+* Backends (`src/backends/`): integrators are implemented via an abstract `SolverBackend` protocol. Concrete implementations include `ScipySolver` and `SundialsSolver`.
+* Physics (`src/physics.py`): the core physical model relies on finite difference spatial discretization with Numba JIT compilation (`@njit(fastmath=True)`) for rapid right-hand side evaluations.
+
 # Installation
 First, clone the repository:
 ```bash
