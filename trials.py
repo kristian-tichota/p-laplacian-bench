@@ -1,9 +1,6 @@
 """Command‑line entry point for the p‑Laplacian benchmarking suite."""
-
 import argparse
-from src.benchmark_configs import benchmarks
-from src.benchmark_runner import run_benchmark_config
-
+from src.benchmark import benchmarks, run_benchmark_config
 
 def main():
     parser = argparse.ArgumentParser(
