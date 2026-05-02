@@ -25,7 +25,7 @@ class SolverBackend(Protocol):
         y0: np.ndarray,
         rhs: Callable,
         sparsity: Optional[np.ndarray] = None,
-        rtol: float = 1e-5,
+        rtol: float = 1e-6,
         atol: float = 1e-6,
         **kwargs
     ) -> SolverResult:
