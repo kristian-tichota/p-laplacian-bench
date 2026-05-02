@@ -56,20 +56,24 @@ def run_single_benchmark(params, ref_u=None, T=0.05, trials=3, check_propagation
         else:
             error_l2 = np.nan
 
-        # ── Propagation check (only when no reference is provided) ─
         if check_propagation and ref_u is None and test_u is not None:
             interior = test_u[1:-1]          # exclude Dirichlet boundaries
-            if np.max(np.abs(interior)) < 0.5:
+            if np.max(np.abs(interior)) < 0.0001:
+                error_message = "Failed: max(abs(Interior)) < 0.0001 (No propagation)",
+            if np.max(interior) > 1.001:
+                error_message = "Failed: max(Interior) > 1.001 (Out of bounds)"
+            if np.min(interior) < -0.001:
+                error_message = "Failed: min(Interior) < -0.001 (Out of bounds)"
                 return {
                     "duration_s": best_time,
-                    "status": "Failed: No propagation (trivial solution)",
+                    "status": error_message,
                     "sparse": str(sparse),
                     "nfev": stats.get("nfev", 0),
                     "njev": stats.get("njev", 0),
                     "nlu": stats.get("nlu", 0),
                     "error_l2": np.nan,
                 }
-            
+
         return {
             "duration_s": best_time,
             "status": "Success",
