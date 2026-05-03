@@ -9,7 +9,7 @@ The project benchmarks time integrators from the solve_ivp suite (LSODA, BDF, Ra
 # Modules
 The codebase has a modular architecture to separate physics, solver backends, and benchmarking pipelines.
 
-* Backends (`src/backends/`): integrators are implemented via an abstract `SolverBackend` protocol. Concrete implementations include `ScipySolver` and `SundialsSolver`.
+* Backends (`src/time_integrators/`): integrators are implemented via an abstract `SolverIntegrator` protocol. Concrete implementations include `ScipyIntegrator` and `SundialsIntegrator`.
 * Physics (`src/physics.py`): the core physical model relies on finite difference spatial discretization with Numba JIT compilation (`@njit(fastmath=True)`) for rapid right-hand side evaluations.
 
 # Installation
@@ -18,14 +18,9 @@ First, clone the repository:
 git clone https://github.com/kristian-tichota/p-laplacian-bench
 cd p-laplacian-bench
 ```
-It is recommended to isolate project dependencies within a dedicated Python virtual environment (e.g. `venv` or `conda`). If using the built-in `venv` module:
+It is recommended to isolate project dependencies within a dedicated Python virtual environment (e.g. `venv` or `conda`). For best reproducibility and ease of install, use`conda`:
 ```bash
-python -m venv .venv
-source .venv/bin/activate
-```
-Once the environment is activated, install the necessary packages:
-```bash
-pip install -r requirements.txt
+conda env create --file environment.yml
 ```
 
 # Benchmarking
