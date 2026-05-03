@@ -1,8 +1,8 @@
 """Thin coordinator – holds PDE model, delegates to backends."""
 import numpy as np
-from .backends.scipy_backend import ScipySolver
-from .backends.sundials_backend import SundialsSolver
-from .backends.base import SolverResult, SolverStats
+from .time_integrators.scipy_integrator import ScipyIntegrator
+from .time_integrators.sundials_integrator import SundialsIntegrator
+from .time_integrators.base import SolverResult, SolverStats
 from .physics import fast_p_laplacian_rhs
 from .model import PLaplacianModel
 from .config import SimulationConfig
@@ -19,9 +19,9 @@ class PLaplacianSolver:
         y0 = np.zeros(self.model.Nx - 1)
 
         if self.config.method.upper() in ("CVODE", "IDA"):
-            backend = SundialsSolver()
+            backend = SundialsIntegrator()
         else:
-            backend = ScipySolver()
+            backend = ScipyIntegrator()
 
         sparsity = self.model.sparsity if self.config.sparse else None
 

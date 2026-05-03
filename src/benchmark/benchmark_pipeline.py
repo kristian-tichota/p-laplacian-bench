@@ -5,7 +5,7 @@ import numpy as np
 import pandas as pd
 from dataclasses import fields
 from typing import Dict, Optional
-from ..backends.base import SolverStats
+from ..time_integrators.base import SolverStats
 from ..model import PLaplacianModel
 from ..solver import PLaplacianSolver
 from ..config import SimulationConfig

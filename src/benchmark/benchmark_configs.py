@@ -130,7 +130,7 @@ benchmarks = {
             "sparse": [True],
             "p": [1.25, 1.1, 1.05, 1.01],
             "epsilon": [1e-6, 1e-8, 1e-10, 1e-12, 1e-14, 1e-30],
-            "Nx": [1000],
+            "Nx": [200],
             "tol": [1e-13],
             "check_propagation": [True]
         },
