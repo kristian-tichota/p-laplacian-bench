@@ -5,7 +5,7 @@ As the nonlinearity index \(p\) approaches 1, the diffusion operator becomes hig
 
 LSODA demonstrates a predictable failure boundary. At highly singular indices (\(p \leq 1.05\)), it consistently encounters catastrophic failures (indicated in red) once \(\varepsilon\) drops below \(10^{-8}\), exiting with the error \lstinline|scipy/integrate/_ivp/lsoda.py:161: UserWarning: lsoda: Repeated convergence failures (perhaps bad Jacobian or tolerances)|.
 
-Yet, at a slightly elevated index of \(p = 1.25\), LSODA manages to integrate the system across the entire regularization sweep down to \(\varepsilon = 10^{-30}\). Nonetheless, this survival comes at a steep computational cost, visibly indicated by the transition into green and yellow execution times as the stifness intensifies.
+Yet, at a slightly elevated index of \(p = 1.25\), LSODA manages to integrate the system across the entire regularization sweep down to \(\varepsilon = 10^{-30}\). Nonetheless, this survival comes at a steep computational cost, visibly indicated by the transition into green and yellow execution times as the stiffness intensifies.
 
 CVODE, on the other hand, exhibits a rather erratic failure topology. It generally collapses at \(\varepsilon \leq 10^{-12}\) for indices like \(p = 1.25\) and \(p = 1.01\) with the error \lstinline|sundials/src/cvode/cvode.c:1487 [CVode] At t = 4.38156039034776e-09, mxstep steps taken before reaching tout|.
 
