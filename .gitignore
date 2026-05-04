@@ -19,3 +19,4 @@
 *.fdb_latexmk
 docs/.auctex-auto/
 docs/sections/.auctex-auto/
+results/
