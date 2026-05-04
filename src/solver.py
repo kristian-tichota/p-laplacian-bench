@@ -6,7 +6,7 @@ from .time_integrators.base import SolverResult, SolverStats
 from .spatial_discretizations.base import SpatialDiscretization
 from .hooks import SolverHook
 from typing import Optional
-
+from .time_integrators.fenicsx_direct import FEniCSxDirectIntegrator
 
 class PLaplacianSolver:
     def __init__(self, discretization: SpatialDiscretization, config):
@@ -18,8 +18,9 @@ class PLaplacianSolver:
         t_eval = np.sort(times)
         y0 = self.disc.get_initial_state()
 
-        # Choose time‑stepper backend
-        if self.config.method.upper() in ("CVODE", "IDA"):
+        if self.config.method.upper() == "FENICSX_DIRECT":
+            backend = FEniCSxDirectIntegrator(self.disc)
+        elif self.config.method.upper() in ("CVODE", "IDA"):
             backend = SundialsIntegrator()
         else:
             backend = ScipyIntegrator()
@@ -42,7 +43,7 @@ class PLaplacianSolver:
         result = backend.solve(
             t_eval, y0, rhs_wrapped, sparsity=sparsity, jac=jac,
             rtol=self.config.rtol, atol=self.config.atol,
-            method=self.config.method, sparse=self.config.sparse
+            method=self.config.method, sparse=self.config.sparse, dt=self.config.dt
         )
 
         # Map state vectors to full spatial solutions

@@ -94,6 +94,25 @@ class FEniCSxDiscretization(SpatialDiscretization):
 
     # ── SpatialDiscretization interface ──────────────────────────
     @property
+    def mesh(self):
+        return self._mesh
+
+    @property
+    def function_space(self):
+        return self._V
+
+    def get_dirichlet_bcs(self) -> list:
+        """Return DirichletBC objects for left (value h) and right (value 0)."""
+        import dolfinx.fem
+        bc_left = dolfinx.fem.dirichletbc(
+            dolfinx.fem.Constant(self._mesh, self.h),
+            self._left_dofs, self._V)
+        bc_right = dolfinx.fem.dirichletbc(
+            dolfinx.fem.Constant(self._mesh, 0.0),
+            self._right_dofs, self._V)
+        return [bc_left, bc_right]   
+
+    @property
     def state_size(self) -> int:
         return self._V.dofmap.index_map.size_global
 

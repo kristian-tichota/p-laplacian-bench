@@ -45,7 +45,7 @@ def build_parser():
     sim_parser.add_argument("--Nx", type=int, default=5000, help="Grid resolution")
     sim_parser.add_argument("--epsilon", type=float, default=1e-6, help="Regularization parameter")
     sim_parser.add_argument("--tol", type=float, default=1e-6, help="Solver tolerance (rtol/atol)")
-    sim_parser.add_argument("--method", type=str, default="LSODA", help="Solver backend method")
+    sim_parser.add_argument("--method", type=str, default="LSODA", choices=["LSODA", "BDF", "Radau", "RK45", "CVODE", "FENICSX_DIRECT"], help="Solver backend method")
     sim_parser.add_argument("--discretization", type=str, default="fdm", choices=["fdm", "fem"])
 
     bench_parser = subparsers.add_parser("benchmark", help="Run a custom benchmark grid")

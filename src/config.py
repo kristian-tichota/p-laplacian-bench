@@ -22,6 +22,7 @@ class SimulationConfig:
     sparse: bool = True
     rtol: float = 1e-6
     atol: float = 1e-6
+    dt: Optional[float] = 1e-3 # only used by FEniCSxDirectIntegrator
 
     # Optional reference solver (for error computation)
     ref_method: str = "CVODE"
