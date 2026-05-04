@@ -1,6 +1,7 @@
 from dataclasses import dataclass
 from typing import Optional
 from .model import PLaplacianModel
+from .spatial_discretizations import create_discretization
 
 @dataclass(frozen=True)
 class SimulationConfig:
@@ -10,6 +11,8 @@ class SimulationConfig:
     L: float = 1.0
     Nx: int = 1000
     epsilon: float = 1e-6
+
+    discretization_type: str = "fdm"
 
     # Time integration
     T: float = 0.05
@@ -31,3 +34,6 @@ class SimulationConfig:
             p=self.p, h=self.h, L=self.L,
             Nx=self.Nx, epsilon=self.epsilon
         )
+    def to_discretization(self):
+        """Create the spatial discretization object."""
+        return create_discretization(self)

@@ -13,15 +13,15 @@ from src.config import SimulationConfig
 def warmup_jit():
     """Warm‑up Numba JIT to avoid timing distortion in benchmarks."""
     config = SimulationConfig(p=2.5, Nx=100, epsilon=1e-6)
-    model = config.to_model()
-    solver = PLaplacianSolver(model, config)
+    disc = config.to_discretization()
+    solver = PLaplacianSolver(disc, config)
     solver.solve([0.001])
 
 def profile_model():
     import cProfile, pstats
     config = SimulationConfig(p=6, Nx=1000, epsilon=1e-6)
-    model = config.to_model()
-    solver = PLaplacianSolver(model, config)
+    disc = config.to_discretization()
+    solver = PLaplacianSolver(disc, config)
 
     def _run():
         solver.solve([0.05])
@@ -46,6 +46,7 @@ def build_parser():
     sim_parser.add_argument("--epsilon", type=float, default=1e-6, help="Regularization parameter")
     sim_parser.add_argument("--tol", type=float, default=1e-6, help="Solver tolerance (rtol/atol)")
     sim_parser.add_argument("--method", type=str, default="LSODA", help="Solver backend method")
+    sim_parser.add_argument("--discretization", type=str, default="fdm", choices=["fdm", "fem"])
 
     bench_parser = subparsers.add_parser("benchmark", help="Run a custom benchmark grid")
     bench_parser.add_argument("--Nx", type=int, nargs="+", default=[50, 200, 1000])
@@ -75,7 +76,7 @@ if __name__ == "__main__":
     if args.command == "simulate":
         config = SimulationConfig(
             p=args.p, Nx=args.Nx, epsilon=args.epsilon,
-            method=args.method, rtol=args.tol, atol=args.tol
+            method=args.method, rtol=args.tol, atol=args.tol, discretization_type=args.discretization
         )
         run_simulation(config, live=args.live)
 

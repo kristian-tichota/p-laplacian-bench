@@ -1,20 +1,19 @@
+"""Live plotting hook using the spatial discretisation object."""
 import numpy as np
 import queue
 import time
-from src.physics import fast_p_laplacian_rhs
-from src.model import PLaplacianModel
+from .spatial_discretizations.base import SpatialDiscretization
+
 
 class LivePlotHook:
     """
     Records integration snapshots for later replay.
-    Implements the SolverHook protocol: callable(t, y).
+    Implements the SolverHook protocol: callable(t, full_u).
     """
-    def __init__(self, model: PLaplacianModel, fps=144, sim_dt_per_frame=0.0002):
-        self.Nx = model.Nx
-        self.dx = model.dx
-        self.p = model.p
-        self.h = model.h
-        self.epsilon = model.epsilon
+
+    def __init__(self, discretization: SpatialDiscretization, fps=144,
+                 sim_dt_per_frame=0.0002):
+        self.disc = discretization
         self.fps = fps
         self.sim_dt_per_frame = sim_dt_per_frame
         self.frame_queue = queue.Queue(maxsize=30)
@@ -23,21 +22,21 @@ class LivePlotHook:
         self._next_frame_t = 0.0
         self.history = []
 
-    def __call__(self, t, u):
-        """Called by the solver at every RHS evaluation."""
+    def __call__(self, t, full_u):
+        """Called by the solver with the full spatial solution."""
         if self._last_u is None:
             self._last_t = t
-            self._last_u = u.copy()
+            self._last_u = full_u.copy()
             self._next_frame_t = t
             return
         if t > self._last_t + 1e-12:
             while self._next_frame_t <= t:
                 weight = (self._next_frame_t - self._last_t) / (t - self._last_t)
-                interp_u = self._last_u + weight * (u - self._last_u)
+                interp_u = self._last_u + weight * (full_u - self._last_u)
                 self.frame_queue.put((self._next_frame_t, interp_u.copy()))
                 self._next_frame_t += self.sim_dt_per_frame
             self._last_t = t
-            self._last_u = u.copy()
+            self._last_u = full_u.copy()
 
     def start_plotter(self, title="Real-time p-Laplacian"):
         import pyqtgraph as pg
@@ -73,13 +72,11 @@ class LivePlotHook:
         self.replay_float_idx = 0.0
         self.replay_speed = 1.0
 
+        # Get the node coordinates once
+        x = self.disc.get_node_coordinates()
+
         def render_state(t_val, u_val, mode_text):
-            x = np.linspace(0, 1, self.Nx + 1)
-            u_full = np.empty(self.Nx + 1)
-            u_full[0] = self.h
-            u_full[1:-1] = u_val
-            u_full[-1] = 0.0
-            curve.setData(x, u_full)
+            curve.setData(x, u_val)
             pw.setTitle(f"t = {t_val:.4f} ({mode_text})")
 
         def update_slider_bounds():

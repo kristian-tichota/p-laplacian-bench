@@ -1,43 +1,48 @@
-"""Modular benchmarking pipeline."""
+"""Modular benchmarking pipeline, discretisation‑agnostic."""
 import time
 import itertools
 import numpy as np
 import pandas as pd
 from dataclasses import fields
 from typing import Dict, Optional
-from ..time_integrators.base import SolverStats
-from ..model import PLaplacianModel
 from ..solver import PLaplacianSolver
 from ..config import SimulationConfig
+
 
 class BenchmarkPipeline:
     def __init__(self):
         self.reference_cache: Dict[tuple, Optional[np.ndarray]] = {}
 
-    def _generate_reference(self, model: PLaplacianModel, T: float) -> np.ndarray:
-        """High‑accuracy reference using CVODE."""
-        key = (model.p, model.epsilon, model.Nx)
+    def _generate_reference(self, config: SimulationConfig) -> np.ndarray:
+        """High‑accuracy reference using same discretisation type."""
+        key = (config.discretization_type, config.p, config.epsilon, config.Nx)
         if key not in self.reference_cache:
             ref_config = SimulationConfig(
-                p=model.p, epsilon=model.epsilon, Nx=model.Nx,
-                method="CVODE", rtol=1e-13, atol=1e-13, T=T
+                p=config.p, h=config.h, L=config.L,
+                Nx=config.Nx, epsilon=config.epsilon,
+                discretization_type=config.discretization_type,
+                method=config.ref_method,
+                rtol=config.ref_rtol, atol=config.ref_atol,
+                sparse=True, T=config.T,
             )
-            ref_solver = PLaplacianSolver(model, ref_config)
-            data, stats = ref_solver.solve([T])
+            disc = ref_config.to_discretization()
+            solver = PLaplacianSolver(disc, ref_config)
+            data, stats = solver.solve([config.T])
             if not stats.success:
                 self.reference_cache[key] = None
                 raise RuntimeError(f"Reference failed: {stats.message}")
-            self.reference_cache[key] = data[T]
+            self.reference_cache[key] = data[config.T]
         return self.reference_cache[key]
 
-    def run_experiment(self, config: SimulationConfig, compute_error: bool = True,
+    def run_experiment(self, config: SimulationConfig,
+                       compute_error: bool = True,
                        check_propagation: bool = False) -> dict:
-        model = config.to_model()
-        solver = PLaplacianSolver(model, config)
-        T = config.T
+        # Create the discretisation for this experiment
+        disc = config.to_discretization()
+        solver = PLaplacianSolver(disc, config)
 
         t0 = time.perf_counter()
-        data, stats = solver.solve([T], check_propagation=check_propagation)
+        data, stats = solver.solve([config.T], check_propagation=check_propagation)
         wall = time.perf_counter() - t0
 
         if not stats.success:
@@ -45,15 +50,15 @@ class BenchmarkPipeline:
                 "method": config.method, "sparse": config.sparse,
                 "p": config.p, "epsilon": config.epsilon, "Nx": config.Nx,
                 "tol": config.rtol, "duration_s": wall,
-                "status": f"Failed: {stats.message}"
+                "status": f"Failed: {stats.message}",
             }
 
         err = np.nan
         if compute_error:
-            ref = self._generate_reference(model, T)
+            ref = self._generate_reference(config)
             if ref is not None:
-                dx = model.dx
-                err = np.sqrt(np.sum((data[T] - ref)**2) * dx)
+                # Use the discretisation’s own error metric
+                err = disc.compute_l2_error(data[config.T], ref)
 
         return {
             "method": config.method, "sparse": config.sparse,
@@ -64,11 +69,12 @@ class BenchmarkPipeline:
             "error_l2": err,
         }
 
-    def run_grid(self, param_grid: dict, T: float = 0.05, compute_error: bool = True) -> pd.DataFrame:
+    def run_grid(self, param_grid: dict, T: float = 0.05,
+                 compute_error: bool = True) -> pd.DataFrame:
         keys, values = zip(*param_grid.items())
         experiments = [dict(zip(keys, v)) for v in itertools.product(*values)]
 
-        # Gather default values from SimulationConfig fields
+        # Gather defaults from SimulationConfig fields
         default_values = {
             f.name: f.default
             for f in fields(SimulationConfig)
@@ -79,20 +85,16 @@ class BenchmarkPipeline:
         results = []
 
         for i, exp in enumerate(experiments, start=1):
-            # Start with all defaults, then override with experiment values
             config_kwargs = {**default_values}
             check_prop = exp.pop("check_propagation", False)
 
-            # Map known experiment keys to config fields
-            # 'tol' -> rtol & atol, 'method' & 'sparse' directly
+            # Map experiment keys to config fields
             for key, value in exp.items():
                 if key == "tol":
                     config_kwargs["rtol"] = value
                     config_kwargs["atol"] = value
-                elif key in config_kwargs:   # only take known fields
+                elif key in config_kwargs:
                     config_kwargs[key] = value
-                # 'T' may be in experiment; use it to override, else keep default
-            # Use T from experiment if provided, else fallback to the method argument
             config_kwargs["T"] = exp.get("T", T)
 
             config = SimulationConfig(**config_kwargs)
