@@ -11,6 +11,7 @@ The codebase has a modular architecture to separate physics, time integrators, a
 
 * Integrators (`src/time_integrators/`): integrators are implemented via an abstract `SolverIntegrator` protocol. Concrete implementations include `ScipyIntegrator` and `SundialsIntegrator`.
 * Physics (`src/physics.py`): the core physical model relies on finite difference spatial discretization with Numba JIT compilation (`@njit(fastmath=True)`) for rapid right-hand side evaluations.
+* Discretizations (`src/spatial_discretizations`): discretizations are implemented via an abstract `SpatialDiscretization` method. The codebase currently supports `FEniCSxDiscretization` for a finite element approach and `FDMDiscretization` for finite differences. Both are used for the method of lines.
 
 # Installation
 First, clone the repository:
