@@ -66,5 +66,4 @@ class FDMDiscretization(SpatialDiscretization):
 
     def compute_l2_error(self, state: np.ndarray,
                          ref_state: np.ndarray) -> float:
-        # Error on interior only, weighted by dx
         return np.sqrt(self.dx * np.sum((state - ref_state) ** 2))
