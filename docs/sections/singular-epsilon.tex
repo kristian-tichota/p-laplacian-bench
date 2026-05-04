@@ -15,7 +15,16 @@ Interestingly, the catastrophic failures observed in the CVODE backend within th
 
 \begin{figure}[H]
   \centering
-  \includegraphics[width=\textwidth]{images/stability_matrix.pdf}
+  \includegraphics[width=\textwidth]{images/stability_matrix_lsoda_cvode.pdf}
   \caption{Heatmap illustrating execution times and failure boundaries for LSODA and CVODE.}
   \label{fig:singular-epsilon}
+\end{figure}
+
+Figure \ref{fig:singular-epsilon-radau} presents the execution time matrix for the Radau solver under substantially harsher conditions. When evaluated at a reduced spatial resolution of \(N_x = 100\) for reasonable computation times, Radau proves extremely robust and stable. Unlike CVODE and LSODA, which would crash even at this reduced spatial resolution, it successfully completes the parameter sweep without convergence failures. However, its remarkably rapid execution times (e.g., \(< 0.5\) seconds for \(\varepsilon \le 10^{-30}\)) are likely a byproduct of its strict L-stability. Upon encountering the stiff initial diffusion, the solver probably instantly damps the infinite transient and thus bypasses the physical resolution of the intermediate dynamics.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=\textwidth]{images/stability_matrix_radau.pdf}
+  \caption{Heatmap illustrating execution times for the Radau solver at \(N_x=100\). Darker regions indicate regimes where strict L-stability likely bypassed the initial transient, artificially accelerating execution without integration failure.}
+  \label{fig:singular-epsilon-radau}
 \end{figure}
