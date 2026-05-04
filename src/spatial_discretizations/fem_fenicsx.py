@@ -46,6 +46,12 @@ class FEniCSxDiscretization(SpatialDiscretization):
 
         e = element("Lagrange", self._mesh.basix_cell(), degree, shape=())
         self._V = fem.functionspace(self._mesh, e)
+        n_dof = self._V.dofmap.index_map.size_global
+        self._sparsity = diags(
+            [np.ones(n_dof - 1), np.ones(n_dof), np.ones(n_dof - 1)],
+            offsets=[-1, 0, 1],
+            format="csc",
+        )
 
         # --- Boundary dofs ---
         self._left_dofs = fem.locate_dofs_geometrical(
