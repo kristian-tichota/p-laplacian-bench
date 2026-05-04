@@ -7,7 +7,7 @@ The purpose of this repository is transparency and reproducible research. Parts 
 The project benchmarks time integrators from the solve_ivp suite (LSODA, BDF, Radau) from SciPy alongside CVODE from the SUNDIALS library. We evaluate solver robustness using the highly nonlinear 1D p-Laplacian partial differential equation. Varying the nonlinearity index p transitions the equation across linear, singular, and strongly degenerate regimes. This provides an ideal stress test for numerical stiffness and solver resilience.
 
 # Modules
-The codebase has a modular architecture to separate physics, time integrators, and benchmarking pipelines.
+The codebase has a modular architecture to separate spatial discretizations, time integrators, and benchmarking pipelines.
 
 * Integrators (`src/time_integrators/`): integrators are implemented via an abstract `SolverIntegrator` protocol. Concrete implementations include `ScipyIntegrator` and `SundialsIntegrator`.
 * Discretizations (`src/spatial_discretizations`): discretizations are implemented via an abstract `SpatialDiscretization` method. The codebase currently supports `FEniCSxDiscretization` for a finite element approach and `FDMDiscretization` for finite differences. Both are used for the method of lines.
