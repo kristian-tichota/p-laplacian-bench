@@ -125,9 +125,9 @@ benchmarks = {
         plot_func=plots.plot_extreme_p,
         plot_filename="extreme_p_scaling.pdf",
     ),
-    "singular_epsilon": BenchmarkConfig(
-        name="singular_epsilon",
-        flag="singular-epsilon",
+    "singular_epsilon_lsoda_cvode": BenchmarkConfig(
+        name="singular_epsilon-lsoda-cvode",
+        flag="singular-epsilon-lsoda-cvode",
         grid={
             "method": ["LSODA", "CVODE"],
             "sparse": [True],
@@ -140,6 +140,23 @@ benchmarks = {
         T=0.05,
         compute_error=False,
         plot_func=plots.plot_singular_epsilon,
-        plot_filename="stability_matrix.pdf",
+        plot_filename="stability_matrix_lsoda_cvode.pdf",
+    ),
+    "singular_epsilon_bdf_radau": BenchmarkConfig(
+        name="singular_epsilon-radau",
+        flag="singular-epsilon-radau",
+        grid={
+            "method": ["Radau"],
+            "sparse": [True],
+            "p": [1.05, 1.01, 1.005, 1.001],
+            "epsilon": [1e-14, 1e-30, 1e-60, 1e-90, 1e-120, 1e-160],
+            "Nx": [100],
+            "tol": [1e-13],
+            "check_propagation": [True],
+        },
+        T=0.05,
+        compute_error=False,
+        plot_func=plots.plot_singular_epsilon,
+        plot_filename="stability_matrix_radau.pdf",
     ),
 }
