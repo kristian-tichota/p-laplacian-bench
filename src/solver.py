@@ -24,6 +24,11 @@ class PLaplacianSolver:
         else:
             backend = ScipyIntegrator()
 
+        jac = None
+        #if hasattr(self.disc, "compute_jac_rhs"):
+        #   jac = lambda t, y: self.disc.compute_jac_rhs(t, y)
+
+            
         sparsity = self.disc.sparsity_pattern if self.config.sparse else None
 
         # Wrap RHS so the hook receives the *full* solution
@@ -35,7 +40,7 @@ class PLaplacianSolver:
             return dydt
 
         result = backend.solve(
-            t_eval, y0, rhs_wrapped, sparsity=sparsity,
+            t_eval, y0, rhs_wrapped, sparsity=sparsity, jac=jac,
             rtol=self.config.rtol, atol=self.config.atol,
             method=self.config.method, sparse=self.config.sparse
         )
