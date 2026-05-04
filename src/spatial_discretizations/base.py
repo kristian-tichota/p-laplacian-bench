@@ -1,5 +1,7 @@
 """Abstract spatial discretization interface."""
+
 from abc import ABC, abstractmethod
+
 import numpy as np
 from scipy.sparse import spmatrix
 
@@ -46,8 +48,7 @@ class SpatialDiscretization(ABC):
         ...
 
     @abstractmethod
-    def compute_l2_error(self, state: np.ndarray,
-                         ref_state: np.ndarray) -> float:
+    def compute_l2_error(self, state: np.ndarray, ref_state: np.ndarray) -> float:
         """Compute the discrete L² error between two state vectors on the
         mesh used by this discretization."""
         ...

@@ -1,20 +1,23 @@
 """Benchmark configuration dataclass and registry."""
+
 from dataclasses import dataclass
 from typing import Callable, Optional
+
 import src.plotting as plots
 
 
 @dataclass
 class BenchmarkConfig:
     name: str
-    flag: str               # CLI flag
-    grid: dict              # parameter grid for benchmark_suite
+    flag: str  # CLI flag
+    grid: dict  # parameter grid for benchmark_suite
     T: float = 0.05
     compute_error: bool = False
     plot_func: Optional[Callable] = None
     run_func: Optional[Callable] = None
     run_kwargs: Optional[dict] = None
     plot_filename: str = "benchmark.pdf"
+
 
 benchmarks = {
     "sparsity": BenchmarkConfig(
@@ -132,7 +135,7 @@ benchmarks = {
             "epsilon": [1e-6, 1e-8, 1e-10, 1e-12, 1e-14, 1e-30],
             "Nx": [1000],
             "tol": [1e-13],
-            "check_propagation": [True]
+            "check_propagation": [True],
         },
         T=0.05,
         compute_error=False,

@@ -1,7 +1,10 @@
 """Immutable definition of the p‑Laplacian PDE."""
+
+from dataclasses import dataclass
+
 import numpy as np
 from scipy.sparse import diags_array
-from dataclasses import dataclass
+
 
 @dataclass(frozen=True)
 class PLaplacianModel:
@@ -22,5 +25,9 @@ class PLaplacianModel:
     @property
     def sparsity(self):
         n_dim = self.Nx - 1
-        return diags_array([np.ones(n_dim-1), np.ones(n_dim), np.ones(n_dim-1)],
-                           offsets=(-1,0,1), shape=(n_dim,n_dim), format="csc")
+        return diags_array(
+            [np.ones(n_dim - 1), np.ones(n_dim), np.ones(n_dim - 1)],
+            offsets=(-1, 0, 1),
+            shape=(n_dim, n_dim),
+            format="csc",
+        )

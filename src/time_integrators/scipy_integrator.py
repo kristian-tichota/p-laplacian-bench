@@ -1,12 +1,14 @@
 # src/time_integrators/scipy_integrator.py
 """SciPy solve_ivp integration backend with analytical Jacobian support."""
 
+from typing import Callable, Optional
+
 import numpy as np
 from scipy.integrate import solve_ivp
 from scipy.sparse import issparse
-from typing import Callable, Optional
-from .base import SolverResult, SolverStats
+
 from ..hooks import SolverHook
+from .base import SolverResult, SolverStats
 
 
 def _sparse_to_banded(J_sparse, n, lband, uband):
@@ -29,17 +31,13 @@ def _sparse_to_banded(J_sparse, n, lband, uband):
     if lband != 1 or uband != 1:
         raise NotImplementedError("Only tridiagonal banded Jacobian is supported here.")
     J = J_sparse.tocoo()
-    # Allocate banded storage: rows 0..(lband+uband) correspond to
-    #   row 0: upper band (j, j+1)
-    #   row 1: diagonal (j, j)
-    #   row 2: lower band (j, j-1)
     banded = np.zeros((3, n), dtype=float)
     for i, j, v in zip(J.row, J.col, J.data):
         if i == j:
             banded[1, j] = v
-        elif i == j - 1:          # super-diagonal
-            banded[0, j] = v      # upper band for column j
-        elif i == j + 1:          # sub-diagonal
+        elif i == j - 1:  # super-diagonal
+            banded[0, j] = v  # upper band for column j
+        elif i == j + 1:  # sub-diagonal
             banded[2, j] = v
     return banded
 
@@ -86,7 +84,6 @@ class ScipyIntegrator:
             elif sparse and sparsity is not None:
                 solve_kwargs["jac_sparsity"] = sparsity
 
-        # Wrap RHS to call the hook
         def rhs_wrapper(t, y):
             dydt = rhs(t, y)
             if hook:

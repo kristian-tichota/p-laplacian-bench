@@ -1,7 +1,9 @@
 from dataclasses import dataclass
 from typing import Optional
+
 from .model import PLaplacianModel
 from .spatial_discretizations import create_discretization
+
 
 @dataclass(frozen=True)
 class SimulationConfig:
@@ -22,7 +24,7 @@ class SimulationConfig:
     sparse: bool = True
     rtol: float = 1e-6
     atol: float = 1e-6
-    dt: Optional[float] = 1e-3 # only used by FEniCSxDirectIntegrator
+    dt: Optional[float] = 1e-3  # only used by FEniCSxDirectIntegrator
 
     # Optional reference solver (for error computation)
     ref_method: str = "CVODE"
@@ -32,9 +34,9 @@ class SimulationConfig:
     def to_model(self) -> PLaplacianModel:
         """Create the physics part as a PLaplacianModel."""
         return PLaplacianModel(
-            p=self.p, h=self.h, L=self.L,
-            Nx=self.Nx, epsilon=self.epsilon
+            p=self.p, h=self.h, L=self.L, Nx=self.Nx, epsilon=self.epsilon
         )
+
     def to_discretization(self):
         """Create the spatial discretization object."""
         return create_discretization(self)

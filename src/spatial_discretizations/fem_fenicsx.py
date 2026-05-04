@@ -4,13 +4,13 @@ FEniCSx‑based FEM discretisation of the 1‑D p‑Laplacian.
 
 from __future__ import annotations
 
-import numpy as np
-from scipy.sparse import spmatrix, csr_array, lil_array, diags
-from mpi4py import MPI
 import dolfinx
-from dolfinx import mesh, fem, la
+import numpy as np
 import ufl
 from basix.ufl import element
+from dolfinx import fem, la, mesh
+from mpi4py import MPI
+from scipy.sparse import csr_array, diags, lil_array, spmatrix
 
 from .base import SpatialDiscretization
 
@@ -42,26 +42,29 @@ class FEniCSxDiscretization(SpatialDiscretization):
             self._mesh = mesh.create_interval(MPI.COMM_WORLD, Nx, [0.0, L])
         else:
             self._mesh = mesh_in
-        self.Nx = self._mesh.topology.index_map(
-            self._mesh.topology.dim).size_local
+        self.Nx = self._mesh.topology.index_map(self._mesh.topology.dim).size_local
 
         e = element("Lagrange", self._mesh.basix_cell(), degree, shape=())
         self._V = fem.functionspace(self._mesh, e)
 
         # --- Boundary dofs ---
         self._left_dofs = fem.locate_dofs_geometrical(
-            self._V, lambda x: np.isclose(x[0], 0.0))
+            self._V, lambda x: np.isclose(x[0], 0.0)
+        )
         self._right_dofs = fem.locate_dofs_geometrical(
-            self._V, lambda x: np.isclose(x[0], L))
-        self._bcs_dofs = np.concatenate(
-            (self._left_dofs, self._right_dofs)).astype(np.int32)
+            self._V, lambda x: np.isclose(x[0], L)
+        )
+        self._bcs_dofs = np.concatenate((self._left_dofs, self._right_dofs)).astype(
+            np.int32
+        )
 
         # --- Lumped mass matrix (vertex quadrature → diagonal) ---
         u = ufl.TrialFunction(self._V)
         v = ufl.TestFunction(self._V)
-        dx_lumped = ufl.dx(domain=self._mesh,
-                           metadata={"quadrature_rule": "vertex",
-                                     "quadrature_degree": 1})
+        dx_lumped = ufl.dx(
+            domain=self._mesh,
+            metadata={"quadrature_rule": "vertex", "quadrature_degree": 1},
+        )
         M_form = fem.form(u * v * dx_lumped)
         M = fem.assemble_matrix(M_form).to_scipy()
         # Sparsity pattern for finite‑difference fallback
@@ -74,13 +77,12 @@ class FEniCSxDiscretization(SpatialDiscretization):
             M_mod[dof, :] = 0.0
             M_mod[:, dof] = 0.0
             M_mod[dof, dof] = 1.0
-        self._M_inv_diag = 1.0 / M_mod.diagonal()   # O(N) inverse
+        self._M_inv_diag = 1.0 / M_mod.diagonal()  # O(N) inverse
 
         # --- Nonlinear residual F(u;v) = ∫ D ∇u·∇v dx ---
         self._u_func = fem.Function(self._V)
         grad_u = ufl.grad(self._u_func)
-        D = (ufl.dot(grad_u, grad_u) + self.epsilon**2) ** \
-            ((self.p - 2) / 2)
+        D = (ufl.dot(grad_u, grad_u) + self.epsilon**2) ** ((self.p - 2) / 2)
         self._F_res = D * ufl.dot(grad_u, ufl.grad(v)) * ufl.dx
         self._residual_form = fem.form(self._F_res)
 
@@ -104,13 +106,14 @@ class FEniCSxDiscretization(SpatialDiscretization):
     def get_dirichlet_bcs(self) -> list:
         """Return DirichletBC objects for left (value h) and right (value 0)."""
         import dolfinx.fem
+
         bc_left = dolfinx.fem.dirichletbc(
-            dolfinx.fem.Constant(self._mesh, self.h),
-            self._left_dofs, self._V)
+            dolfinx.fem.Constant(self._mesh, self.h), self._left_dofs, self._V
+        )
         bc_right = dolfinx.fem.dirichletbc(
-            dolfinx.fem.Constant(self._mesh, 0.0),
-            self._right_dofs, self._V)
-        return [bc_left, bc_right]   
+            dolfinx.fem.Constant(self._mesh, 0.0), self._right_dofs, self._V
+        )
+        return [bc_left, bc_right]
 
     @property
     def state_size(self) -> int:
@@ -127,7 +130,7 @@ class FEniCSxDiscretization(SpatialDiscretization):
         self._u_func.x.array[:] = state.ravel()
         R = fem.assemble_vector(self._residual_form)
         R.scatter_reverse(la.InsertMode.add)
-        R.array[self._bcs_dofs] = 0.0        
+        R.array[self._bcs_dofs] = 0.0
         return -R.array * self._M_inv_diag
 
     @property
@@ -141,11 +144,9 @@ class FEniCSxDiscretization(SpatialDiscretization):
     def get_node_coordinates(self) -> np.ndarray:
         return self._x_full
 
-    def compute_l2_error(self, state: np.ndarray,
-                         ref_state: np.ndarray) -> float:
+    def compute_l2_error(self, state: np.ndarray, ref_state: np.ndarray) -> float:
         cell_size = self._mesh.h(0, 0)[0]
-        return np.sqrt(cell_size * np.sum(
-            (state.ravel() - ref_state.ravel())**2))
+        return np.sqrt(cell_size * np.sum((state.ravel() - ref_state.ravel()) ** 2))
 
     # ── Optional analytical Jacobian (not used by default) ────────
     def compute_jac_rhs(self, t: float, y: np.ndarray) -> spmatrix:

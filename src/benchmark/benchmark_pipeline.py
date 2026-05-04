@@ -1,12 +1,15 @@
 """Modular benchmarking pipeline, discretisation‑agnostic."""
-import time
+
 import itertools
-import numpy as np
-import pandas as pd
+import time
 from dataclasses import fields
 from typing import Dict, Optional
-from ..solver import PLaplacianSolver
+
+import numpy as np
+import pandas as pd
+
 from ..config import SimulationConfig
+from ..solver import PLaplacianSolver
 
 
 class BenchmarkPipeline:
@@ -18,12 +21,17 @@ class BenchmarkPipeline:
         key = (config.discretization_type, config.p, config.epsilon, config.Nx)
         if key not in self.reference_cache:
             ref_config = SimulationConfig(
-                p=config.p, h=config.h, L=config.L,
-                Nx=config.Nx, epsilon=config.epsilon,
+                p=config.p,
+                h=config.h,
+                L=config.L,
+                Nx=config.Nx,
+                epsilon=config.epsilon,
                 discretization_type=config.discretization_type,
                 method=config.ref_method,
-                rtol=config.ref_rtol, atol=config.ref_atol,
-                sparse=True, T=config.T,
+                rtol=config.ref_rtol,
+                atol=config.ref_atol,
+                sparse=True,
+                T=config.T,
             )
             disc = ref_config.to_discretization()
             solver = PLaplacianSolver(disc, ref_config)
@@ -34,9 +42,12 @@ class BenchmarkPipeline:
             self.reference_cache[key] = data[config.T]
         return self.reference_cache[key]
 
-    def run_experiment(self, config: SimulationConfig,
-                       compute_error: bool = True,
-                       check_propagation: bool = False) -> dict:
+    def run_experiment(
+        self,
+        config: SimulationConfig,
+        compute_error: bool = True,
+        check_propagation: bool = False,
+    ) -> dict:
         # Create the discretisation for this experiment
         disc = config.to_discretization()
         solver = PLaplacianSolver(disc, config)
@@ -47,9 +58,13 @@ class BenchmarkPipeline:
 
         if not stats.success:
             return {
-                "method": config.method, "sparse": config.sparse,
-                "p": config.p, "epsilon": config.epsilon, "Nx": config.Nx,
-                "tol": config.rtol, "duration_s": wall,
+                "method": config.method,
+                "sparse": config.sparse,
+                "p": config.p,
+                "epsilon": config.epsilon,
+                "Nx": config.Nx,
+                "tol": config.rtol,
+                "duration_s": wall,
                 "status": f"Failed: {stats.message}",
             }
 
@@ -61,24 +76,29 @@ class BenchmarkPipeline:
                 err = disc.compute_l2_error(data[config.T], ref)
 
         return {
-            "method": config.method, "sparse": config.sparse,
-            "p": config.p, "epsilon": config.epsilon, "Nx": config.Nx,
-            "tol": config.rtol, "duration_s": wall,
+            "method": config.method,
+            "sparse": config.sparse,
+            "p": config.p,
+            "epsilon": config.epsilon,
+            "Nx": config.Nx,
+            "tol": config.rtol,
+            "duration_s": wall,
             "status": "Success",
-            "nfev": stats.nfev, "njev": stats.njev, "nlu": stats.nlu,
+            "nfev": stats.nfev,
+            "njev": stats.njev,
+            "nlu": stats.nlu,
             "error_l2": err,
         }
 
-    def run_grid(self, param_grid: dict, T: float = 0.05,
-                 compute_error: bool = True) -> pd.DataFrame:
+    def run_grid(
+        self, param_grid: dict, T: float = 0.05, compute_error: bool = True
+    ) -> pd.DataFrame:
         keys, values = zip(*param_grid.items())
         experiments = [dict(zip(keys, v)) for v in itertools.product(*values)]
 
         # Gather defaults from SimulationConfig fields
         default_values = {
-            f.name: f.default
-            for f in fields(SimulationConfig)
-            if f.default is not None
+            f.name: f.default for f in fields(SimulationConfig) if f.default is not None
         }
 
         total_runs = len(experiments)
@@ -99,8 +119,9 @@ class BenchmarkPipeline:
 
             config = SimulationConfig(**config_kwargs)
 
-            res = self.run_experiment(config, compute_error=compute_error,
-                                      check_propagation=check_prop)
+            res = self.run_experiment(
+                config, compute_error=compute_error, check_propagation=check_prop
+            )
             results.append(res)
 
             method = config.method

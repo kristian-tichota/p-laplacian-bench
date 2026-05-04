@@ -1,7 +1,10 @@
 """Live plotting hook using the spatial discretisation object."""
-import numpy as np
+
 import queue
 import time
+
+import numpy as np
+
 from .spatial_discretizations.base import SpatialDiscretization
 
 
@@ -11,8 +14,9 @@ class LivePlotHook:
     Implements the SolverHook protocol: callable(t, full_u).
     """
 
-    def __init__(self, discretization: SpatialDiscretization, fps=144,
-                 sim_dt_per_frame=0.0002):
+    def __init__(
+        self, discretization: SpatialDiscretization, fps=144, sim_dt_per_frame=0.0002
+    ):
         self.disc = discretization
         self.fps = fps
         self.sim_dt_per_frame = sim_dt_per_frame
@@ -50,7 +54,7 @@ class LivePlotHook:
         main_window.setLayout(layout)
 
         pw = pg.PlotWidget()
-        curve = pw.plot(pen=pg.mkPen('r', width=2))
+        curve = pw.plot(pen=pg.mkPen("r", width=2))
         layout.addWidget(pw)
 
         controls_layout = QtWidgets.QHBoxLayout()
@@ -120,7 +124,9 @@ class LivePlotHook:
                 self.auto_scroll = True
 
         slider.sliderPressed.connect(on_slider_pressed)
-        slider.valueChanged.connect(lambda: on_slider_moved() if not self.auto_scroll else None)
+        slider.valueChanged.connect(
+            lambda: on_slider_moved() if not self.auto_scroll else None
+        )
         slider.sliderReleased.connect(on_slider_released)
 
         def start_replay():

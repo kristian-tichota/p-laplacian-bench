@@ -3,18 +3,19 @@ nonlinear solve at each step)."""
 
 from __future__ import annotations
 
-import numpy as np
 from typing import Dict, Optional
-from .base import SolverResult, SolverStats
-from ..spatial_discretizations.base import SpatialDiscretization
-from ..hooks import SolverHook
 
 import dolfinx
-from dolfinx import fem, nls
 import dolfinx.fem.petsc
 import dolfinx.nls.petsc
-from mpi4py import MPI
+import numpy as np
 import ufl
+from dolfinx import fem, nls
+from mpi4py import MPI
+
+from ..hooks import SolverHook
+from ..spatial_discretizations.base import SpatialDiscretization
+from .base import SolverResult, SolverStats
 
 
 class FEniCSxDirectIntegrator:
@@ -28,7 +29,7 @@ class FEniCSxDirectIntegrator:
         self,
         t_eval: np.ndarray,
         y0: np.ndarray,
-        rhs=None,                  # ignored, only for interface compatibility
+        rhs=None,  # ignored, only for interface compatibility
         sparsity=None,
         rtol: float = 1e-6,
         atol: float = 1e-6,
@@ -97,7 +98,9 @@ class FEniCSxDirectIntegrator:
                 if not converged:
                     current_dt *= 0.5
                     if current_dt < dt_min:
-                        return SolverResult(data, SolverStats(False, f"Time step too small at t={t}"))
+                        return SolverResult(
+                            data, SolverStats(False, f"Time step too small at t={t}")
+                        )
                     u.x.array[:] = u_old.x.array
                     continue
 
@@ -126,7 +129,9 @@ class FEniCSxDirectIntegrator:
                 if not converged:
                     current_dt *= 0.5
                     if current_dt < dt_min:
-                        return SolverResult(data, SolverStats(False, f"Time step too small at t={t}"))
+                        return SolverResult(
+                            data, SolverStats(False, f"Time step too small at t={t}")
+                        )
                     u.x.array[:] = u_old.x.array
                     continue
 

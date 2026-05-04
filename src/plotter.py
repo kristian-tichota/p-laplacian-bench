@@ -1,9 +1,10 @@
-import numpy as np
-import matplotlib.pyplot as plt
 import matplotlib.cm as cm
-from .solver import PLaplacianSolver
+import matplotlib.pyplot as plt
+import numpy as np
+
 from .config import SimulationConfig
 from .live_plot import LivePlotHook
+from .solver import PLaplacianSolver
 
 
 def run_simulation(config: SimulationConfig, live: bool = False):
@@ -14,8 +15,13 @@ def run_simulation(config: SimulationConfig, live: bool = False):
     if live:
         hook = LivePlotHook(disc)
         import threading
-        threading.Thread(target=solver.solve, args=(times_to_plot,),
-                         kwargs={"hook": hook}, daemon=True).start()
+
+        threading.Thread(
+            target=solver.solve,
+            args=(times_to_plot,),
+            kwargs={"hook": hook},
+            daemon=True,
+        ).start()
         hook.start_plotter()
         return {}, {}
     else:
@@ -25,8 +31,15 @@ def run_simulation(config: SimulationConfig, live: bool = False):
     fig, ax = plt.subplots(figsize=(10, 6), dpi=120)
     colors = cm.magma(np.linspace(0.2, 0.85, len(times_to_plot)))
 
-    ax.text(0.5, 0.8, f"p = {config.p}", fontsize=12, color="gray",
-            alpha=0.7, transform=ax.transAxes)
+    ax.text(
+        0.5,
+        0.8,
+        f"p = {config.p}",
+        fontsize=12,
+        color="gray",
+        alpha=0.7,
+        transform=ax.transAxes,
+    )
 
     for i, t in enumerate(times_to_plot):
         u_vals = results[t]
