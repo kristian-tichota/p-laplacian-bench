@@ -1,0 +1,21 @@
+Detailed Calculation Logs: discretization_comparison
+Generated at: 20260506_151255
+====================================================================================================
+method  sparse   p      epsilon   Nx          tol  duration_s  status   nfev  njev   nlu  error_l2  use_analytical_jacobian discretization_type
+ LSODA    True 3.0 1.000000e-10 5000 1.000000e-10   13.737072 Success  61746  3951  3951       NaN                     True                 fdm
+ LSODA    True 3.0 1.000000e-10 5000 1.000000e-10   26.053700 Success  62820  4040  4040       NaN                     True                 fem
+ LSODA    True 4.0 1.000000e-10 5000 1.000000e-10   24.423344 Success 109536  5817  5817       NaN                     True                 fdm
+ LSODA    True 4.0 1.000000e-10 5000 1.000000e-10   37.372921 Success 108116  5720  5720       NaN                     True                 fem
+ LSODA    True 5.0 1.000000e-10 5000 1.000000e-10   36.247526 Success 160718  9309  9309       NaN                     True                 fdm
+ LSODA    True 5.0 1.000000e-10 5000 1.000000e-10   66.641459 Success 160708  9294  9294       NaN                     True                 fem
+ LSODA    True 6.0 1.000000e-10 5000 1.000000e-10   47.619424 Success 209580 13439 13439       NaN                     True                 fdm
+ LSODA    True 6.0 1.000000e-10 5000 1.000000e-10   76.053143 Success 210893 13580 13580       NaN                     True                 fem
+ CVODE    True 3.0 1.000000e-10 5000 1.000000e-10    7.372500 Success  35769     0  3175       NaN                     True                 fdm
+ CVODE    True 3.0 1.000000e-10 5000 1.000000e-10   14.520223 Success  36916     0  3399       NaN                     True                 fem
+ CVODE    True 4.0 1.000000e-10 5000 1.000000e-10   13.994941 Success  80426     0  4721       NaN                     True                 fdm
+ CVODE    True 4.0 1.000000e-10 5000 1.000000e-10   21.695578 Success  79422     0  4713       NaN                     True                 fem
+ CVODE    True 5.0 1.000000e-10 5000 1.000000e-10   19.191948 Success 112906     0  6397       NaN                     True                 fdm
+ CVODE    True 5.0 1.000000e-10 5000 1.000000e-10   36.791686 Success 113073     0  6409       NaN                     True                 fem
+ CVODE    True 6.0 1.000000e-10 5000 1.000000e-10   23.598143 Success 141323     0  7865       NaN                     True                 fdm
+ CVODE    True 6.0 1.000000e-10 5000 1.000000e-10   37.286262 Success 143031     0  8328       NaN                     True                 fem
+====================================================================================================

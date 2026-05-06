@@ -1,0 +1,21 @@
+Detailed Calculation Logs: fdm_analytic_comparison_bdf_radau
+Generated at: 20260506_150427
+====================================================================================================
+method  sparse   p      epsilon   Nx          tol  duration_s  status   nfev  njev   nlu  error_l2  use_analytical_jacobian discretization_type
+   BDF    True 4.0 1.000000e-10 1000 1.000000e-10    5.087782 Success  55762  1754  4305       NaN                     True                 fdm
+   BDF    True 5.0 1.000000e-10 1000 1.000000e-10    6.699080 Success  76605  2555  6095       NaN                     True                 fdm
+   BDF    True 6.0 1.000000e-10 1000 1.000000e-10    7.249601 Success  94672  2797  7196       NaN                     True                 fdm
+   BDF    True 7.0 1.000000e-10 1000 1.000000e-10    8.360805 Success 108477  3059  8116       NaN                     True                 fdm
+   BDF    True 4.0 1.000000e-10 1000 1.000000e-10   10.972089 Success  55895  1757  4308       NaN                    False                 fdm
+   BDF    True 5.0 1.000000e-10 1000 1.000000e-10   15.530075 Success  76778  2525  6079       NaN                    False                 fdm
+   BDF    True 6.0 1.000000e-10 1000 1.000000e-10   17.701907 Success  94765  2802  7200       NaN                    False                 fdm
+   BDF    True 7.0 1.000000e-10 1000 1.000000e-10   19.346904 Success 108311  3047  8100       NaN                    False                 fdm
+ Radau    True 4.0 1.000000e-10 1000 1.000000e-10   10.849231 Success  98506  8465 17026       NaN                     True                 fdm
+ Radau    True 5.0 1.000000e-10 1000 1.000000e-10   12.593142 Success 127920 11442 23026       NaN                     True                 fdm
+ Radau    True 6.0 1.000000e-10 1000 1.000000e-10   15.412344 Success 156371 13721 28054       NaN                     True                 fdm
+ Radau    True 7.0 1.000000e-10 1000 1.000000e-10   17.861024 Success 180487 15566 32632       NaN                     True                 fdm
+ Radau    True 4.0 1.000000e-10 1000 1.000000e-10   37.975813 Success  98544  8468 17038       NaN                    False                 fdm
+ Radau    True 5.0 1.000000e-10 1000 1.000000e-10   50.722097 Success 128042 11443 23026       NaN                    False                 fdm
+ Radau    True 6.0 1.000000e-10 1000 1.000000e-10   61.224392 Success 156383 13724 28062       NaN                    False                 fdm
+ Radau    True 7.0 1.000000e-10 1000 1.000000e-10   69.581539 Success 180425 15543 32568       NaN                    False                 fdm
+====================================================================================================
