@@ -38,7 +38,6 @@ class FEniCSxDirectIntegrator:
         hook: Optional[SolverHook] = None,
         **kwargs,
     ) -> SolverResult:
-        # Extract parameters from the discretisation
         p = self.disc.p
         epsilon = self.disc.epsilon
         L = self.disc.L

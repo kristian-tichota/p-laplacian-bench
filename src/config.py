@@ -15,6 +15,7 @@ class SimulationConfig:
     epsilon: float = 1e-6
 
     discretization_type: str = "fdm"
+    use_analytical_jacobian: bool = False
 
     # Time integration
     T: float = 0.05

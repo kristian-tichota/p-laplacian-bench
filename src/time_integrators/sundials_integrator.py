@@ -25,6 +25,8 @@ class SundialsIntegrator:
         except ImportError as exc:
             raise ImportError("Install scikits.odes for SUNDIALS support") from exc
 
+        jac = kwargs.pop("jac", None)
+
         method = kwargs.get("method", "cvode").lower()
         options = dict(
             rtol=rtol,
@@ -34,6 +36,14 @@ class SundialsIntegrator:
             uband=1,
             linsolver="band",
         )
+        if jac is not None:
+            # jac(t, y) returns a (3, N) banded array; wrap for SUNDIALS
+            def jac_wrapper(t, y, fy, J):
+                banded = jac(t, y)
+                J[:] = banded
+                return 0
+
+            options["jacfn"] = jac_wrapper
 
         # Wrap the RHS so the hook is called at every evaluation
         def rhs_with_hook(t, y, ydot):

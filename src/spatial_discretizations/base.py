@@ -52,3 +52,23 @@ class SpatialDiscretization(ABC):
         """Compute the discrete L² error between two state vectors on the
         mesh used by this discretization."""
         ...
+
+    @abstractmethod
+    def compute_jac_rhs(self, t: float, state: np.ndarray) -> spmatrix:
+        """
+        Compute the analytical Jacobian ∂f/∂y of the RHS f(t,y).
+        Returns a sparse matrix (typically CSC/CSR).
+        """
+        ...
+
+    @abstractmethod
+    def compute_jac_banded(self, t: float, state: np.ndarray) -> np.ndarray:
+        """
+        Optional: return the Jacobian in banded storage format (3, N) for
+        tridiagonal systems. Used by LSODA to avoid sparse ↔ banded conversion.
+        Returns a (3, N) NumPy array where row 0 = superdiagonal, row 1 = main diagonal,
+        row 2 = subdiagonal. Raises NotImplementedError if not available.
+        """
+        raise NotImplementedError(
+            "Banded Jacobian not implemented for this discretization"
+        )

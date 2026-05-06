@@ -31,8 +31,16 @@ class PLaplacianSolver:
             backend = ScipyIntegrator()
 
         jac = None
-        # if hasattr(self.disc, "compute_jac_rhs"):
-        #   jac = lambda t, y: self.disc.compute_jac_rhs(t, y)
+        if self.config.use_analytical_jacobian:
+            if self.config.method in ("LSODA", "CVODE") and self.config.sparse:
+                # LSODA & CVODE with banded linear solvers need a banded (3,N) array
+                if hasattr(self.disc, "compute_jac_banded"):
+                    jac = self.disc.compute_jac_banded
+            elif self.config.method in ("BDF", "Radau"):
+                # BDF, Radau use sparse Jacobians directly
+                if hasattr(self.disc, "compute_jac_rhs"):
+                    jac = self.disc.compute_jac_rhs
+            # for other methods (RK45, FENiCSX_DIRECT) jac remains None
 
         sparsity = self.disc.sparsity_pattern if self.config.sparse else None
 
@@ -55,6 +63,7 @@ class PLaplacianSolver:
             method=self.config.method,
             sparse=self.config.sparse,
             dt=self.config.dt,
+            use_analytical_jacobian=self.config.use_analytical_jacobian,
         )
 
         # Map state vectors to full spatial solutions

@@ -5,6 +5,7 @@ FEniCSx‑based FEM discretisation of the 1‑D p‑Laplacian.
 from __future__ import annotations
 
 import dolfinx
+import dolfinx.fem.petsc
 import numpy as np
 import ufl
 from basix.ufl import element
@@ -100,6 +101,9 @@ class FEniCSxDiscretization(SpatialDiscretization):
         # Node coordinates
         self._x_full = self._mesh.geometry.x[:, 0].copy()
 
+        self._bcs_cached = self.get_dirichlet_bcs()
+        self._J_petsc = dolfinx.fem.petsc.create_matrix(self._jac_res_form)
+
     # ── SpatialDiscretization interface ──────────────────────────
     @property
     def mesh(self):
@@ -155,22 +159,43 @@ class FEniCSxDiscretization(SpatialDiscretization):
         return np.sqrt(cell_size * np.sum((state.ravel() - ref_state.ravel()) ** 2))
 
     # ── Optional analytical Jacobian (not used by default) ────────
-    def compute_jac_rhs(self, t: float, y: np.ndarray) -> spmatrix:
+
+    def compute_jac_rhs(self, t: float, state: np.ndarray) -> spmatrix:
         """
-        Exact Jacobian of `compute_rhs` w.r.t. `y`.
+        Exact Jacobian of `compute_rhs` w.r.t. `state` using native PETSc assembly.
         Returns a sparse matrix (tridiagonal).
         """
-        self._u_func.x.array[:] = y.ravel()
-        J_res = fem.assemble_matrix(self._jac_res_form)
-        J_res.scatter_reverse()
-        J_res_sp = J_res.to_scipy()
+        import dolfinx.fem.petsc
+        from scipy.sparse import csr_matrix
 
-        J_res_mod = lil_array(J_res_sp.shape)
-        J_res_mod[:] = J_res_sp.tolil()
-        for dof in self._bcs_dofs:
-            J_res_mod[dof, :] = 0.0
-            J_res_mod[:, dof] = 0.0
-            J_res_mod[dof, dof] = 1.0
+        self._u_func.x.array[:] = state.ravel()
 
-        J_rhs = -diags(self._M_inv_diag) @ J_res_mod.tocsr()
-        return J_rhs
+        # Zero out the preallocated PETSc matrix
+        self._J_petsc.zeroEntries()
+
+        # Assemble in-place with boundary conditions applied natively by PETSc
+        dolfinx.fem.petsc.assemble_matrix(
+            self._J_petsc, self._jac_res_form, bcs=self._bcs_cached
+        )
+        self._J_petsc.assemble()
+
+        # Extract CSR data directly from the PETSc matrix
+        indptr, indices, data = self._J_petsc.getValuesCSR()
+        J_res_sp = csr_matrix((data, indices, indptr), shape=self._J_petsc.getSize())
+
+        # Apply lumped mass matrix inverse for the ODE formulation (J = -M^-1 * J_res)
+        J_rhs = -diags(self._M_inv_diag) @ J_res_sp
+
+        return J_rhs.tocsc()
+
+    def compute_jac_banded(self, t: float, state: np.ndarray) -> np.ndarray:
+        """Return the tridiagonal Jacobian in banded (3, N) format for LSODA.
+        Assumes the Jacobian is strictly tridiagonal (true for 1D linear elements)."""
+        J = self.compute_jac_rhs(t, state)  # CSC matrix
+        n = J.shape[0]
+        banded = np.zeros((3, n))
+        # Extract three diagonals from the sparse matrix
+        banded[0, 1:] = J.diagonal(1)  # super‑diagonal
+        banded[1, :] = J.diagonal(0)  # main diagonal
+        banded[2, :-1] = J.diagonal(-1)  # sub‑diagonal
+        return banded

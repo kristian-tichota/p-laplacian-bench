@@ -91,6 +91,9 @@ def add_simulate_args(parser: argparse.ArgumentParser):
     parser.add_argument(
         "--live", action="store_true", help="Enable real‑time GPU‑accelerated plotting"
     )
+    parser.add_argument(
+        "--analytic-jac", action="store_true", help="Enable analytical Jacobian"
+    )
 
 
 def add_profile_args(parser: argparse.ArgumentParser):
@@ -143,6 +146,7 @@ def config_from_args(args: argparse.Namespace) -> SimulationConfig:
         rtol=args.tol,
         atol=args.tol,
         discretization_type=getattr(args, "discretization", "fdm"),
+        use_analytical_jacobian=getattr(args, "analytic_jac", False),
     )
 
 

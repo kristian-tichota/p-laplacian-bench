@@ -404,3 +404,120 @@ def plot_singular_epsilon(df: pd.DataFrame):
     plt.close()
     print(f"Saved {filepath}")
     export_detailed_log(df, "stability_matrix.pdf")
+
+
+def _facet_line_plot(
+    df: pd.DataFrame,
+    group_col: str,  # column that splits lines inside each subplot
+    x: str,
+    y: str,
+    hue_col: str = "method",
+    xlabel: str = "",
+    ylabel: str = "Duration (seconds, Log Scale)",
+    xlog: bool = True,
+    ylog: bool = True,
+    filename: str = "comparison.pdf",
+    group_labels: dict = None,
+):
+    """Generic facet grid: one subplot per method, lines for each `group_col`."""
+    success = df[df["status"] == "Success"]
+    methods = sorted(success[hue_col].unique())
+    n_methods = len(methods)
+    if n_methods == 0:
+        print("No successful runs to plot.")
+        return
+
+    fig, axes = plt.subplots(1, n_methods, figsize=(5 * n_methods, 5), sharey=True)
+    if n_methods == 1:
+        axes = [axes]
+
+    for ax, method in zip(axes, methods):
+        method_df = success[success[hue_col] == method]
+        color = METHOD_STYLE[method]["color"]
+        groups = sorted(method_df[group_col].unique())
+        linestyles = ["-", "--", "-.", ":"]  # extend if needed
+        for g, ls in zip(groups, linestyles):
+            sub = method_df[method_df[group_col] == g]
+            if sub.empty:
+                continue
+            label = group_labels.get(g, str(g)) if group_labels else str(g)
+            ax.plot(
+                sub[x],
+                sub[y],
+                marker=METHOD_STYLE[method]["marker"],
+                fillstyle="full" if ls == "-" else "none",
+                color=color,
+                linestyle=ls,
+                linewidth=2.5,
+                markersize=9,
+                label=label,
+            )
+        if xlog:
+            ax.set_xscale("log")
+        if ylog:
+            ax.set_yscale("log")
+        ax.set_xlabel(xlabel, fontweight="bold")
+        if ax is axes[0]:
+            ax.set_ylabel(ylabel, fontweight="bold")
+        ax.set_title(method, fontweight="bold")
+        ax.grid(True, which="major", ls="-", alpha=0.8)
+        ax.grid(True, which="minor", ls="--", alpha=0.4)
+        ax.legend(loc="upper left", frameon=True)
+
+    plt.tight_layout()
+    filepath = os.path.join(RESULTS_DIR, filename)
+    plt.savefig(filepath, format="pdf", bbox_inches="tight")
+    plt.close()
+    print(f"Saved {filepath}")
+    export_detailed_log(df, filename)
+
+
+def plot_analytic_jac_comparison_nx(df: pd.DataFrame):
+    """
+    Benchmarks ``fdm_analytic_comparison_lsoda_cvode``.
+    Compares analytic vs numerical Jacobian for LSODA and CVODE
+    across grid sizes (Nx).
+    """
+    _facet_line_plot(
+        df,
+        group_col="use_analytical_jacobian",
+        x="Nx",
+        y="duration_s",
+        xlabel="Grid Resolution ($N_x$, Log Scale)",
+        filename="fdm_analytic_comparison_lsoda_cvode.pdf",
+        group_labels={True: "Analytic Jacobian", False: "Numerical Jacobian"},
+    )
+
+
+def plot_analytic_jac_comparison_p(df: pd.DataFrame):
+    """
+    Benchmarks ``fdm_analytic_comparison_bdf_radau``.
+    Compares analytic vs numerical Jacobian for BDF and Radau
+    across nonlinearity index p.
+    """
+    _facet_line_plot(
+        df,
+        group_col="use_analytical_jacobian",
+        x="p",
+        y="duration_s",
+        xlabel="Nonlinearity Index ($p$)",
+        filename="fdm_analytic_comparison_bdf_radau.pdf",
+        group_labels={True: "Analytic Jacobian", False: "Numerical Jacobian"},
+    )
+
+
+def plot_discretization_comparison_p(df: pd.DataFrame):
+    """
+    Benchmarks ``discretization_analytic``.
+    Compares FDM vs FEM (both with analytic Jacobian) for LSODA and CVODE
+    across nonlinearity index p.
+    """
+    _facet_line_plot(
+        df,
+        group_col="discretization_type",
+        x="p",
+        y="duration_s",
+        xlabel="Nonlinearity Index ($p$)",
+        filename="discretization_comparison.pdf",
+        group_labels={"fdm": "FDM", "fem": "FEM"},
+    )

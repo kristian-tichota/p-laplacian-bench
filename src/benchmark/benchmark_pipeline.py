@@ -122,6 +122,9 @@ class BenchmarkPipeline:
             res = self.run_experiment(
                 config, compute_error=compute_error, check_propagation=check_prop
             )
+            for key, value in exp.items():
+                if key not in res:
+                    res[key] = value
             results.append(res)
 
             method = config.method

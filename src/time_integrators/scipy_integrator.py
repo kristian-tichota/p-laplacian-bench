@@ -62,22 +62,16 @@ class ScipyIntegrator:
 
         # --- Handle Jacobian ---
         if jac is not None:
-            # If we have an analytical Jacobian, wrap it to return the right format
             if method == "LSODA" and sparse:
-                # LSODA with banded Jacobian: need (lband+uband+1, n) array
-                lband, uband = 1, 1
-                solve_kwargs["lband"] = lband
-                solve_kwargs["uband"] = uband
-                n = len(y0)
-                jac_banded = lambda t, y: _sparse_to_banded(jac(t, y), n, lband, uband)
-                solve_kwargs["jac"] = jac_banded
+                # The caller already passed a callable that returns a (3, N) banded array
+                solve_kwargs["lband"] = 1
+                solve_kwargs["uband"] = 1
+                solve_kwargs["jac"] = jac  # direct banded callable
             else:
-                # BDF, Radau (or LSODA dense) – the callable itself returns a
-                # sparse matrix, which solve_ivp accepts directly.
+                # jac returns a sparse matrix (BDF, Radau)
                 solve_kwargs["jac"] = jac
         else:
-            # No analytical Jacobian: use sparsity pattern for finite‑difference
-            # approximations (LSODA ignores this flag and uses band storage).
+            # finite‑difference mode: supply band structure or sparsity pattern
             if method == "LSODA" and sparse:
                 solve_kwargs["lband"] = 1
                 solve_kwargs["uband"] = 1
