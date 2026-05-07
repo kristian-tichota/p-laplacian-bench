@@ -213,4 +213,22 @@ benchmarks = {
         plot_func=plots.plot_analytic_jac_comparison_p,
         plot_filename="fdm_analytic_comparison_bdf_radau.pdf",
     ),
+    "singular_epsilon_lsoda_cvode_analytic": BenchmarkConfig(
+        name="singular_epsilon-lsoda-cvode-analytic",
+        flag="singular-epsilon-lsoda-cvode-analytic",
+        grid={
+            "method": ["LSODA", "CVODE"],
+            "sparse": [True],
+            "use_analytical_jacobian": [True],
+            "p": [1.25, 1.1, 1.05, 1.01],
+            "epsilon": [1e-6, 1e-8, 1e-10, 1e-12, 1e-14, 1e-30],
+            "Nx": [1000],
+            "tol": [1e-13],
+            "check_propagation": [True],
+        },
+        T=0.05,
+        compute_error=False,
+        plot_func=plots.plot_singular_epsilon,
+        plot_filename="stability_matrix_lsoda_cvode_analytic.pdf",
+    ),
 }
