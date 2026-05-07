@@ -21,7 +21,6 @@ METHOD_STYLE = {
 
 
 def apply_method_style(ax):
-    """Force colours & markers to match METHOD_STYLE for all lines."""
     for line in ax.lines:
         label = line.get_label()
         if label in METHOD_STYLE:
@@ -48,7 +47,6 @@ def apply_method_style(ax):
 
 
 def export_detailed_log(df: pd.DataFrame, base_filename: str):
-    """Save a timestamped text file inside RESULTS_DIR."""
     timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
     stem = base_filename.replace(".pdf", "")
     fname = f"{stem}_{timestamp}.txt"
@@ -78,7 +76,6 @@ def line_plot(
     highlight_lsoda: bool = False,
     extra_customisations: Callable | None = None,
 ):
-    """Generic line‑plot for benchmark results, with consistent styling."""
     plot_df = df[(df["status"] == "Success")].copy()
     if plot_df.empty:
         print("No successful runs to plot.")
@@ -96,7 +93,7 @@ def line_plot(
         palette={m: s["color"] for m, s in METHOD_STYLE.items()},
         linewidth=2.5,
         markersize=9,
-        sort=False,  # keep original order
+        sort=False,
     )
 
     if xlog:
@@ -111,7 +108,6 @@ def line_plot(
     plt.grid(True, which="major", ls="-", alpha=0.8)
     plt.grid(True, which="minor", ls="--", alpha=0.4)
 
-    # Optional annotation of tolerance / parameter
     if annotation_col:
         for _, row in plot_df.iterrows():
             ax.annotate(
@@ -137,7 +133,6 @@ def line_plot(
 
     apply_method_style(ax)
     plt.tight_layout()
-    # Save inside RESULTS_DIR
     filepath = os.path.join(RESULTS_DIR, filename)
     plt.savefig(filepath, format="pdf", bbox_inches="tight")
     plt.close()
@@ -145,12 +140,7 @@ def line_plot(
     export_detailed_log(df, filename)
 
 
-# ═══════════════════════════════════════════════════════════════════
-# Concrete plot functions (mostly thin wrappers around line_plot)
-# ═══════════════════════════════════════════════════════════════════
-
-
-def plot_work_effort(df: pd.DataFrame):
+def plot_work_effort(df: pd.DataFrame, filename: str = "work_effort.pdf"):
     line_plot(
         df,
         x="duration_s",
@@ -161,11 +151,11 @@ def plot_work_effort(df: pd.DataFrame):
         ylabel="L2 Error (Log Scale)",
         annotation_col="tol",
         highlight_lsoda=True,
-        filename="work_effort.pdf",
+        filename=filename,
     )
 
 
-def plot_cvode_work_effort(df: pd.DataFrame):
+def plot_cvode_work_effort(df: pd.DataFrame, filename: str = "cvode_work_effort.pdf"):
     line_plot(
         df,
         x="duration_s",
@@ -175,11 +165,11 @@ def plot_cvode_work_effort(df: pd.DataFrame):
         xlabel="Execution Time (seconds, Log Scale)",
         ylabel="L2 Error (Log Scale)",
         annotation_col="tol",
-        filename="cvode_work_effort.pdf",
+        filename=filename,
     )
 
 
-def plot_epsilon_sweep(df: pd.DataFrame):
+def plot_epsilon_sweep(df: pd.DataFrame, filename: str = "epsilon_sweep.pdf"):
     line_plot(
         df,
         x="epsilon",
@@ -189,7 +179,7 @@ def plot_epsilon_sweep(df: pd.DataFrame):
         invert_x=True,
         xlabel=r"Regularization Parameter ($\epsilon$, Log Scale)",
         ylabel="Duration (seconds, Log Scale)",
-        filename="epsilon_sweep.pdf",
+        filename=filename,
     )
 
 
@@ -207,7 +197,7 @@ def _p_sweep_custom(ax, df):
     )
 
 
-def plot_p_sweep(df: pd.DataFrame):
+def plot_p_sweep(df: pd.DataFrame, filename: str = "p_sweep.pdf"):
     line_plot(
         df,
         x="p",
@@ -216,11 +206,11 @@ def plot_p_sweep(df: pd.DataFrame):
         xlabel="Nonlinearity Index ($p$)",
         ylabel="Duration (seconds, Log Scale)",
         extra_customisations=_p_sweep_custom,
-        filename="p_sweep.pdf",
+        filename=filename,
     )
 
 
-def plot_extreme_nx(df: pd.DataFrame):
+def plot_extreme_nx(df: pd.DataFrame, filename: str = "extreme_nx_scaling.pdf"):
     line_plot(
         df,
         x="Nx",
@@ -229,11 +219,11 @@ def plot_extreme_nx(df: pd.DataFrame):
         ylog=True,
         xlabel="Grid Resolution ($N_x$, Log Scale)",
         ylabel="Duration (seconds, Log Scale)",
-        filename="extreme_nx_scaling.pdf",
+        filename=filename,
     )
 
 
-def plot_extreme_p(df: pd.DataFrame):
+def plot_extreme_p(df: pd.DataFrame, filename: str = "extreme_p_scaling.pdf"):
     line_plot(
         df,
         x="p",
@@ -241,12 +231,11 @@ def plot_extreme_p(df: pd.DataFrame):
         ylog=True,
         xlabel="Nonlinearity Index ($p$)",
         ylabel="Duration (seconds, Log Scale)",
-        filename="extreme_p_scaling.pdf",
+        filename=filename,
     )
 
 
-def plot_sparsity_scaling(df: pd.DataFrame):
-    """Sparsity scaling – separate handling because of dense/sparse legend."""
+def plot_sparsity_scaling(df: pd.DataFrame, filename: str = "sparsity_scaling.pdf"):
     plot_df = df[df["status"] == "Success"].copy()
     if plot_df.empty:
         print("No successful runs.")
@@ -292,7 +281,6 @@ def plot_sparsity_scaling(df: pd.DataFrame):
     plt.grid(True, which="major", ls="-", alpha=0.8)
     plt.grid(True, which="minor", ls="--", alpha=0.4)
 
-    # ── Apply METHOD_STYLE colours & markers to the lines ──────────
     for line in ax.lines:
         label = line.get_label()
         if label in METHOD_STYLE:
@@ -301,10 +289,8 @@ def plot_sparsity_scaling(df: pd.DataFrame):
             line.set_marker(style["marker"])
             line.set_markersize(9)
 
-    # ── Build clean legend without duplicates ──────────────────────
     handles, labels = ax.get_legend_handles_labels()
 
-    # De-duplicate: keep only the first occurrence of each label
     seen = set()
     unique_handles, unique_labels = [], []
     for h, l in zip(handles, labels):
@@ -313,13 +299,11 @@ def plot_sparsity_scaling(df: pd.DataFrame):
             unique_handles.append(h)
             unique_labels.append(l)
 
-    # Filter to only method lines (skip other possible artefacts)
     method_handles = [
         h for h, l in zip(unique_handles, unique_labels) if l in METHOD_STYLE
     ]
     method_labels = [l for l in unique_labels if l in METHOD_STYLE]
 
-    # Add dummy entries for Sparse / Dense
     (sparse_handle,) = ax.plot([], [], color="gray", linestyle="-", label="Sparse")
     (dense_handle,) = ax.plot([], [], color="gray", linestyle="--", label="Dense")
 
@@ -333,15 +317,14 @@ def plot_sparsity_scaling(df: pd.DataFrame):
     )
 
     plt.tight_layout()
-    filepath = os.path.join(RESULTS_DIR, "sparsity_scaling.pdf")
+    filepath = os.path.join(RESULTS_DIR, filename)
     plt.savefig(filepath, format="pdf", bbox_inches="tight")
     plt.close()
     print(f"Saved {filepath}")
-    export_detailed_log(df, "sparsity_scaling.pdf")
+    export_detailed_log(df, filename)
 
 
-def plot_singular_epsilon(df: pd.DataFrame):
-    """Heatmap for the singular epsilon crash test."""
+def plot_singular_epsilon(df: pd.DataFrame, filename: str = "stability_matrix.pdf"):
     plot_df = df.copy()
     success_mask = plot_df["status"] == "Success"
     successes = plot_df[success_mask]
@@ -399,16 +382,16 @@ def plot_singular_epsilon(df: pd.DataFrame):
         color="#ff4c4c",
     )
     plt.tight_layout()
-    filepath = os.path.join(RESULTS_DIR, "stability_matrix.pdf")
+    filepath = os.path.join(RESULTS_DIR, filename)
     plt.savefig(filepath, format="pdf", bbox_inches="tight")
     plt.close()
     print(f"Saved {filepath}")
-    export_detailed_log(df, "stability_matrix.pdf")
+    export_detailed_log(df, filename)
 
 
 def _facet_line_plot(
     df: pd.DataFrame,
-    group_col: str,  # column that splits lines inside each subplot
+    group_col: str,
     x: str,
     y: str,
     hue_col: str = "method",
@@ -419,7 +402,6 @@ def _facet_line_plot(
     filename: str = "comparison.pdf",
     group_labels: dict = None,
 ):
-    """Generic facet grid: one subplot per method, lines for each `group_col`."""
     success = df[df["status"] == "Success"]
     methods = sorted(success[hue_col].unique())
     n_methods = len(methods)
@@ -435,7 +417,7 @@ def _facet_line_plot(
         method_df = success[success[hue_col] == method]
         color = METHOD_STYLE[method]["color"]
         groups = sorted(method_df[group_col].unique())
-        linestyles = ["-", "--", "-.", ":"]  # extend if needed
+        linestyles = ["-", "--", "-.", ":"]
         for g, ls in zip(groups, linestyles):
             sub = method_df[method_df[group_col] == g]
             if sub.empty:
@@ -472,52 +454,43 @@ def _facet_line_plot(
     export_detailed_log(df, filename)
 
 
-def plot_analytic_jac_comparison_nx(df: pd.DataFrame):
-    """
-    Benchmarks ``fdm_analytic_comparison_lsoda_cvode``.
-    Compares analytic vs numerical Jacobian for LSODA and CVODE
-    across grid sizes (Nx).
-    """
+def plot_analytic_jac_comparison_nx(
+    df: pd.DataFrame, filename: str = "fdm_analytic_comparison_lsoda_cvode.pdf"
+):
     _facet_line_plot(
         df,
         group_col="use_analytical_jacobian",
         x="Nx",
         y="duration_s",
         xlabel="Grid Resolution ($N_x$, Log Scale)",
-        filename="fdm_analytic_comparison_lsoda_cvode.pdf",
+        filename=filename,
         group_labels={True: "Analytic Jacobian", False: "Numerical Jacobian"},
     )
 
 
-def plot_analytic_jac_comparison_p(df: pd.DataFrame):
-    """
-    Benchmarks ``fdm_analytic_comparison_bdf_radau``.
-    Compares analytic vs numerical Jacobian for BDF and Radau
-    across nonlinearity index p.
-    """
+def plot_analytic_jac_comparison_p(
+    df: pd.DataFrame, filename: str = "fdm_analytic_comparison_bdf_radau.pdf"
+):
     _facet_line_plot(
         df,
         group_col="use_analytical_jacobian",
         x="p",
         y="duration_s",
         xlabel="Nonlinearity Index ($p$)",
-        filename="fdm_analytic_comparison_bdf_radau.pdf",
+        filename=filename,
         group_labels={True: "Analytic Jacobian", False: "Numerical Jacobian"},
     )
 
 
-def plot_discretization_comparison_p(df: pd.DataFrame):
-    """
-    Benchmarks ``discretization_analytic``.
-    Compares FDM vs FEM (both with analytic Jacobian) for LSODA and CVODE
-    across nonlinearity index p.
-    """
+def plot_discretization_comparison_p(
+    df: pd.DataFrame, filename: str = "discretization_comparison.pdf"
+):
     _facet_line_plot(
         df,
         group_col="discretization_type",
         x="p",
         y="duration_s",
         xlabel="Nonlinearity Index ($p$)",
-        filename="discretization_comparison.pdf",
+        filename=filename,
         group_labels={"fdm": "FDM", "fem": "FEM"},
     )
