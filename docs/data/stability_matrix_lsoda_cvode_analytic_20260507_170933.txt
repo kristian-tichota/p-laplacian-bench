@@ -1,0 +1,53 @@
+Detailed Calculation Logs: stability_matrix
+Generated at: 20260507_170933
+====================================================================================================
+method  sparse    p      epsilon   Nx          tol  duration_s                              status     nfev     njev      nlu  error_l2  use_analytical_jacobian
+ LSODA    True 1.25 1.000000e-06 1000 1.000000e-13    0.339936                             Success   4254.0    127.0    127.0       NaN                     True
+ LSODA    True 1.25 1.000000e-08 1000 1.000000e-13    0.191873                             Success   4158.0    139.0    139.0       NaN                     True
+ LSODA    True 1.25 1.000000e-10 1000 1.000000e-13    0.192708                             Success   4153.0    160.0    160.0       NaN                     True
+ LSODA    True 1.25 1.000000e-12 1000 1.000000e-13   29.957588                             Success 465195.0 182627.0 182627.0       NaN                     True
+ LSODA    True 1.25 1.000000e-14 1000 1.000000e-13   40.538238                             Success 640413.0 255754.0 255754.0       NaN                     True
+ LSODA    True 1.25 1.000000e-30 1000 1.000000e-13   40.719902                             Success 648321.0 258803.0 258803.0       NaN                     True
+ LSODA    True 1.10 1.000000e-06 1000 1.000000e-13    0.160972                             Success   3679.0    128.0    128.0       NaN                     True
+ LSODA    True 1.10 1.000000e-08 1000 1.000000e-13    0.160813                             Success   3582.0    133.0    133.0       NaN                     True
+ LSODA    True 1.10 1.000000e-10 1000 1.000000e-13    0.161314                             Success   3587.0    133.0    133.0       NaN                     True
+ LSODA    True 1.10 1.000000e-12 1000 1.000000e-13    0.000783 Failed: Unexpected istate in LSODA.      NaN      NaN      NaN       NaN                     True
+ LSODA    True 1.10 1.000000e-14 1000 1.000000e-13    0.000634 Failed: Unexpected istate in LSODA.      NaN      NaN      NaN       NaN                     True
+ LSODA    True 1.10 1.000000e-30 1000 1.000000e-13    0.000613 Failed: Unexpected istate in LSODA.      NaN      NaN      NaN       NaN                     True
+ LSODA    True 1.05 1.000000e-06 1000 1.000000e-13    0.145428                             Success   3207.0    130.0    130.0       NaN                     True
+ LSODA    True 1.05 1.000000e-08 1000 1.000000e-13    0.143251                             Success   3209.0    121.0    121.0       NaN                     True
+ LSODA    True 1.05 1.000000e-10 1000 1.000000e-13    0.000617 Failed: Unexpected istate in LSODA.      NaN      NaN      NaN       NaN                     True
+ LSODA    True 1.05 1.000000e-12 1000 1.000000e-13    0.000585 Failed: Unexpected istate in LSODA.      NaN      NaN      NaN       NaN                     True
+ LSODA    True 1.05 1.000000e-14 1000 1.000000e-13    0.000573 Failed: Unexpected istate in LSODA.      NaN      NaN      NaN       NaN                     True
+ LSODA    True 1.05 1.000000e-30 1000 1.000000e-13    0.000587 Failed: Unexpected istate in LSODA.      NaN      NaN      NaN       NaN                     True
+ LSODA    True 1.01 1.000000e-06 1000 1.000000e-13    0.116038                             Success   2564.0    124.0    124.0       NaN                     True
+ LSODA    True 1.01 1.000000e-08 1000 1.000000e-13    0.113911                             Success   2506.0    127.0    127.0       NaN                     True
+ LSODA    True 1.01 1.000000e-10 1000 1.000000e-13    0.000522 Failed: Unexpected istate in LSODA.      NaN      NaN      NaN       NaN                     True
+ LSODA    True 1.01 1.000000e-12 1000 1.000000e-13    0.000470 Failed: Unexpected istate in LSODA.      NaN      NaN      NaN       NaN                     True
+ LSODA    True 1.01 1.000000e-14 1000 1.000000e-13    0.000428 Failed: Unexpected istate in LSODA.      NaN      NaN      NaN       NaN                     True
+ LSODA    True 1.01 1.000000e-30 1000 1.000000e-13    0.000470 Failed: Unexpected istate in LSODA.      NaN      NaN      NaN       NaN                     True
+ CVODE    True 1.25 1.000000e-06 1000 1.000000e-13    0.156126                             Success   4363.0      0.0    533.0       NaN                     True
+ CVODE    True 1.25 1.000000e-08 1000 1.000000e-13    0.169155                             Success   4807.0      0.0    632.0       NaN                     True
+ CVODE    True 1.25 1.000000e-10 1000 1.000000e-13    0.184481                             Success   5205.0      0.0    628.0       NaN                     True
+ CVODE    True 1.25 1.000000e-12 1000 1.000000e-13   54.637538    Failed: SUNDIALS failed: flag -1      NaN      NaN      NaN       NaN                     True
+ CVODE    True 1.25 1.000000e-14 1000 1.000000e-13   55.631983    Failed: SUNDIALS failed: flag -1      NaN      NaN      NaN       NaN                     True
+ CVODE    True 1.25 1.000000e-30 1000 1.000000e-13    0.160473                             Success   4605.0      0.0    567.0       NaN                     True
+ CVODE    True 1.10 1.000000e-06 1000 1.000000e-13    0.136542                             Success   3944.0      0.0    506.0       NaN                     True
+ CVODE    True 1.10 1.000000e-08 1000 1.000000e-13    0.146415                             Success   4128.0      0.0    557.0       NaN                     True
+ CVODE    True 1.10 1.000000e-10 1000 1.000000e-13    0.151910                             Success   4128.0      0.0    560.0       NaN                     True
+ CVODE    True 1.10 1.000000e-12 1000 1.000000e-13  145.027240    Failed: SUNDIALS failed: flag -1      NaN      NaN      NaN       NaN                     True
+ CVODE    True 1.10 1.000000e-14 1000 1.000000e-13   91.423253    Failed: SUNDIALS failed: flag -1      NaN      NaN      NaN       NaN                     True
+ CVODE    True 1.10 1.000000e-30 1000 1.000000e-13  108.542080    Failed: SUNDIALS failed: flag -1      NaN      NaN      NaN       NaN                     True
+ CVODE    True 1.05 1.000000e-06 1000 1.000000e-13    0.141079                             Success   4078.0      0.0    544.0       NaN                     True
+ CVODE    True 1.05 1.000000e-08 1000 1.000000e-13    0.133072                             Success   3821.0      0.0    513.0       NaN                     True
+ CVODE    True 1.05 1.000000e-10 1000 1.000000e-13    0.399557                             Success   8980.0      0.0   1432.0       NaN                     True
+ CVODE    True 1.05 1.000000e-12 1000 1.000000e-13    0.128329                             Success   3607.0      0.0    506.0       NaN                     True
+ CVODE    True 1.05 1.000000e-14 1000 1.000000e-13    0.183925                             Success   4963.0      0.0    699.0       NaN                     True
+ CVODE    True 1.05 1.000000e-30 1000 1.000000e-13  214.168492    Failed: SUNDIALS failed: flag -1      NaN      NaN      NaN       NaN                     True
+ CVODE    True 1.01 1.000000e-06 1000 1.000000e-13    0.117051                             Success   3431.0      0.0    397.0       NaN                     True
+ CVODE    True 1.01 1.000000e-08 1000 1.000000e-13    0.131629                             Success   3772.0      0.0    531.0       NaN                     True
+ CVODE    True 1.01 1.000000e-10 1000 1.000000e-13    0.564420                             Success  11137.0      0.0   2280.0       NaN                     True
+ CVODE    True 1.01 1.000000e-12 1000 1.000000e-13  237.603751    Failed: SUNDIALS failed: flag -1      NaN      NaN      NaN       NaN                     True
+ CVODE    True 1.01 1.000000e-14 1000 1.000000e-13  228.192906    Failed: SUNDIALS failed: flag -1      NaN      NaN      NaN       NaN                     True
+ CVODE    True 1.01 1.000000e-30 1000 1.000000e-13    0.103020                             Success   2901.0      0.0    439.0       NaN                     True
+====================================================================================================
