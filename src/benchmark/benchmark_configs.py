@@ -142,7 +142,7 @@ benchmarks = {
         plot_func=plots.plot_singular_epsilon,
         plot_filename="stability_matrix_lsoda_cvode.pdf",
     ),
-    "singular_epsilon_bdf_radau": BenchmarkConfig(
+    "singular_epsilon_radau": BenchmarkConfig(
         name="singular_epsilon-radau",
         flag="singular-epsilon-radau",
         grid={
@@ -178,8 +178,8 @@ benchmarks = {
         plot_filename="fdm_analytic_comparison_lsoda_cvode.pdf",
     ),
     "analytic_discretization_comparison": BenchmarkConfig(
-        name="analytic_fdm_vs_fem",
-        flag="discretization-analytic",
+        name="analytic_fdm_vs_fem_lsoda_cvode",
+        flag="discretization-analytic-lsoda-cvode",
         grid={
             "method": ["LSODA", "CVODE"],
             "sparse": [True],
@@ -196,8 +196,8 @@ benchmarks = {
         plot_filename="analytic_discretization_comparison.pdf",
     ),
     "fdm_analytic_comparison_bdf_radau": BenchmarkConfig(
-        name="analytic_fdm_vs_fem",
-        flag="fdm-analytic-bdf-radau",
+        name="analytic_fdm_vs_fem_bdf_radau",
+        flag="discretization-analytic-bdf-radau",
         grid={
             "method": ["BDF", "Radau"],
             "sparse": [True],
